@@ -97,7 +97,7 @@ export module EcognitaMathLib {
         max() {
             let maxVal = this._elements[0];
             for (var _i = 1; _i < this._dimension; _i++) {
-                maxVal = Math.min(maxVal, this._elements[_i]);
+                maxVal = Math.max(maxVal, this._elements[_i]);
             }
             return maxVal;
         }
@@ -141,7 +141,7 @@ export module EcognitaMathLib {
             if (this.size() != others.size()) return false;
 
             for (var _i = 0; _i < this.size(); _i++) {
-                if (this.at(_i) != others.data()[_i]) return false;
+                if (this.at(_i) != others.at(_i)) return false;
             }
 
             return true;
@@ -151,7 +151,7 @@ export module EcognitaMathLib {
             if (this.size() != others.size()) return false;
 
             for (var _i = 0; _i < this.size(); _i++) {
-                if (Math.abs(this.at(_i) - others.data()[_i]) > epsilon) return false;
+                if (Math.abs(this.at(_i) - others.at(_i)) > epsilon) return false;
             }
 
             return true;

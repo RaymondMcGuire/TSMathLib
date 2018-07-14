@@ -47,7 +47,7 @@ describe("Vector", () => {
             expect(v.at(2)).to.equal(-9.0);
             expect(v.at(3)).to.equal(8.0);
         });
-        it("fundmental calculate function test", () => { 
+        it("fundmental calculate function test", () => {
             expect(v.sum()).to.equal(7.5);
             expect(v.avg()).to.equal(7.5 / 4.0);
             expect(v.min()).to.equal(-9.0);
@@ -58,6 +58,73 @@ describe("Vector", () => {
             expect(v.length()).to.equal(Math.sqrt(187.25));
         });
 
+        it("distance function test", () => {
+            let v1 = new mathvec.EcognitaMathLib.Vector(4, new Array(3.0, -1.0, 2.0, 5.0));
+            expect(v1.distanceSquaredTo(v)).to.equal(151.25);
+            expect(v1.distanceTo(v)).to.equal(Math.sqrt(151.25));
+        });
 
+        it("similiar/equal function test", () => {
+            let data = v.data().concat();
+            data[0] += 1e-8;
+            data[1] -= 1e-8;
+            data[2] += 1e-8;
+            data[3] -= 1e-8;
+
+            let v1 = new mathvec.EcognitaMathLib.Vector(4, data);
+            expect(v.isSimilar(v1, 1e-7)).to.be.true;
+            expect(v.isEqual(v1)).to.be.false;
+        });
+
+        it("binary operation function test", () => {
+            let v1 = new mathvec.EcognitaMathLib.Vector(4, new Array(3.0, -1.0, 2.0, 5.0));
+            let v2 = v1.add(v);
+            expect(v2.at(0)).to.equal(9.0);
+            expect(v2.at(1)).to.equal(1.5);
+            expect(v2.at(2)).to.equal(-7.0);
+            expect(v2.at(3)).to.equal(13.0);
+
+            v2 = v1.add(3.0);
+            expect(v2.at(0)).to.equal(6.0);
+            expect(v2.at(1)).to.equal(2.0);
+            expect(v2.at(2)).to.equal(5.0);
+            expect(v2.at(3)).to.equal(8.0);
+
+            v2 = v1.sub(v);
+            expect(v2.at(0)).to.equal(-3.0);
+            expect(v2.at(1)).to.equal(-3.5);
+            expect(v2.at(2)).to.equal(11.0);
+            expect(v2.at(3)).to.equal(-3.0);
+
+            v2 = v1.sub(4.0);
+            expect(v2.at(0)).to.equal(-1.0);
+            expect(v2.at(1)).to.equal(-5.0);
+            expect(v2.at(2)).to.equal(-2.0);
+            expect(v2.at(3)).to.equal(1.0);
+
+            v2 = v1.mul(v);
+            expect(v2.at(0)).to.equal(18.0);
+            expect(v2.at(1)).to.equal(-2.5);
+            expect(v2.at(2)).to.equal(-18.0);
+            expect(v2.at(3)).to.equal(40.0);
+
+            v2 = v1.mul(2.0);
+            expect(v2.at(0)).to.equal(6.0);
+            expect(v2.at(1)).to.equal(-2.0);
+            expect(v2.at(2)).to.equal(4.0);
+            expect(v2.at(3)).to.equal(10.0);
+
+            v2 = v1.div(v);
+            expect(v2.at(0)).to.equal(0.5);
+            expect(v2.at(1)).to.equal(-0.4);
+            expect(v2.at(2)).to.equal(-2.0 / 9.0);
+            expect(v2.at(3)).to.equal(0.625);
+
+            v2 = v1.div(0.5);
+            expect(v2.at(0)).to.equal(6.0);
+            expect(v2.at(1)).to.equal(-2.0);
+            expect(v2.at(2)).to.equal(4.0);
+            expect(v2.at(3)).to.equal(10.0);
+        });
     })
 });

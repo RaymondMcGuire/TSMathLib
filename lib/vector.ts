@@ -5,7 +5,8 @@
  *  T:type,default setting is number
  *  D:dimension
  * ========================================================================= */
-import * as utils from './math_utils'
+import {absMax,absMin} from './math_utils'
+
 export class Vector {
     private _elements: Array<number>;
     private _dimension: number;
@@ -110,7 +111,7 @@ export class Vector {
     absmax() {
         let absMaxVal = this._elements[0];
         for (var _i = 1; _i < this._dimension; _i++) {
-            absMaxVal = utils.absmax(absMaxVal, this._elements[_i]);
+            absMaxVal = absMax(absMaxVal, this._elements[_i]);
         }
         return absMaxVal;
     }
@@ -118,7 +119,7 @@ export class Vector {
     absmin() {
         let absMinVal = this._elements[0];
         for (var _i = 1; _i < this._dimension; _i++) {
-            absMinVal = utils.absmin(absMinVal, this._elements[_i]);
+            absMinVal = absMin(absMinVal, this._elements[_i]);
         }
         return absMinVal;
     }

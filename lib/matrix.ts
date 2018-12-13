@@ -5,9 +5,9 @@
  *  T:type,default setting is number
  *  D:dimension
  * ========================================================================= */
-import * as utils from './math_utils'
+import {muldec} from './math_utils'
 import { Vector } from './vector'
-import * as itf from './interface'
+import {MatrixIndex,MatrixData,MatrixRow} from './interface'
 export class Matrix {
 
     private _elements: Array<number>;
@@ -64,7 +64,7 @@ export class Matrix {
 
     cols() { return this._N; }
 
-    forEachIndex(indexs: itf.MatrixIndex) {
+    forEachIndex(indexs: MatrixIndex) {
         for (var _i = 0; _i < this.rows(); _i++) {
             for (var _j = 0; _j < this.cols(); _j++) {
                 indexs(_i, _j);
@@ -72,7 +72,7 @@ export class Matrix {
         }
     }
 
-    forEachData(data: itf.MatrixData) {
+    forEachData(data: MatrixData) {
         for (var _i = 0; _i < this.rows(); _i++) {
             for (var _j = 0; _j < this.cols(); _j++) {
                 data(this.getDataByIndexs(_i, _j));
@@ -80,7 +80,7 @@ export class Matrix {
         }
     }
 
-    forEachRow(row: itf.MatrixRow) {
+    forEachRow(row: MatrixRow) {
         for (var _i = 0; _i < this.rows(); _i++) {
             let row_array = Array<number>(this.cols());
             for (var _j = 0; _j < this.cols(); _j++) {
@@ -160,7 +160,7 @@ export class Matrix {
                 //console.log(m.getDataByIndexs(n, j))
                 //console.log(this.getDataByIndexs(i, n) * m.getDataByIndexs(n, j))
 
-                d += utils.muldec(this.getDataByIndexs(i, n), m.getDataByIndexs(n, j));
+                d += muldec(this.getDataByIndexs(i, n), m.getDataByIndexs(n, j));
             }
 
             mm.setDataByIndexs(i, j, d);

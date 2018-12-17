@@ -69,15 +69,4 @@ module ECvLib{
             return this._DATA[2];
         }
     }
-
-    export class ImLoad{
-
-        image:any;
-
-        constructor(path:string){
-            this.image = new Image();
-            this.image.src = path;
-        }
-
-    }
 }

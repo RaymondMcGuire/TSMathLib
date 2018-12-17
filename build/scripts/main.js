@@ -515,6 +515,62 @@ var EMathLib;
     }
     EMathLib.conjugate_grad = conjugate_grad;
 })(EMathLib || (EMathLib = {}));
+var EDsLib;
+(function (EDsLib) {
+    ;
+    var HashSet = /** @class */ (function () {
+        function HashSet() {
+            this.items = {};
+        }
+        HashSet.prototype.set = function (key, value) {
+            this.items[key] = value;
+        };
+        HashSet.prototype["delete"] = function (key) {
+            return delete this.items[key];
+        };
+        HashSet.prototype.has = function (key) {
+            return key in this.items;
+        };
+        HashSet.prototype.get = function (key) {
+            return this.items[key];
+        };
+        HashSet.prototype.len = function () {
+            return Object.keys(this.items).length;
+        };
+        HashSet.prototype.forEach = function (f) {
+            for (var k in this.items) {
+                f(k, this.items[k]);
+            }
+        };
+        return HashSet;
+    }());
+    EDsLib.HashSet = HashSet;
+})(EDsLib || (EDsLib = {}));
+/// <reference path="../ds/hashset.ts" />
+var ECvLib;
+(function (ECvLib) {
+    var SimpleImageLoadSystem = /** @class */ (function () {
+        function SimpleImageLoadSystem(paths, callback) {
+            var _this = this;
+            var images = new EDsLib.HashSet();
+            this.loadedImages = 0;
+            this.numImages = paths.len();
+            paths.forEach(function (k, v) {
+                images.set(k, new Image());
+                images.get(k).onload = function () {
+                    if (++_this.loadedImages >= _this.numImages) {
+                        console.log("images loaded!");
+                        callback(images);
+                    }
+                };
+                images.get(k).src = v;
+            });
+            this.images = images;
+        }
+        return SimpleImageLoadSystem;
+    }());
+    ECvLib.SimpleImageLoadSystem = SimpleImageLoadSystem;
+})(ECvLib || (ECvLib = {}));
 /// <reference path="../lib/matrix.ts" />
 /// <reference path="../lib/interface.ts" />
 var ECvLib;
@@ -573,26 +629,21 @@ var ECvLib;
         return MatHxWx3;
     }());
     ECvLib.MatHxWx3 = MatHxWx3;
-    var ImLoad = /** @class */ (function () {
-        function ImLoad(path) {
-            this.image = new Image();
-            this.image.src = path;
-        }
-        return ImLoad;
-    }());
-    ECvLib.ImLoad = ImLoad;
 })(ECvLib || (ECvLib = {}));
 /// <reference path="../lib/conjugate_grad.ts" />
 /// <reference path="../lib/vector.ts" />
 /// <reference path="../lib/matrix.ts" />
-/// <reference path="../cv/im.ts" />
+/// <reference path="../ds/hashset.ts" />
+/// <reference path="../cv/s_imload.ts" />
+/// <reference path="../cv/matHW3.ts" />
 var cvs_target = document.getElementById("cvs_target");
 var cvs_mask = document.getElementById("cvs_mask");
 var cvs_source = document.getElementById("cvs_source");
 var cvs_synthesis = document.getElementById("cvs_synthesis");
-var mona_target = new ECvLib.ImLoad("./images/mona-target.jpg");
-var mona_mask = new ECvLib.ImLoad("./images/mona-mask.jpg");
-var leber_source = new ECvLib.ImLoad("./images/leber-source.jpg");
+var paths = new EDsLib.HashSet();
+paths.set("mona_target", "./images/mona-target.jpg");
+paths.set("mona_mask", "./images/mona-mask.jpg");
+paths.set("leber_source", "./images/leber-source.jpg");
 function clip(v, min, max) {
     if (v < min)
         v = min;
@@ -600,113 +651,110 @@ function clip(v, min, max) {
         v = max;
     return v;
 }
-//load image
-mona_target.image.onload = function () {
-    console.log("target image loaded");
-    mona_mask.image.onload = function () {
-        console.log("mask image loaded");
-        leber_source.image.onload = function () {
-            console.log("source image loaded");
-            //get image data from canvas
-            cvs_target.height = mona_target.image.height;
-            cvs_target.width = mona_target.image.width;
-            var height = cvs_target.height;
-            var width = cvs_target.width;
-            cvs_mask.height = mona_mask.image.height;
-            cvs_mask.width = mona_mask.image.width;
-            cvs_source.height = leber_source.image.height;
-            cvs_source.width = leber_source.image.width;
-            var context_target = cvs_target.getContext('2d');
-            context_target.drawImage(mona_target.image, 0, 0);
-            var imageData_target = context_target.getImageData(0, 0, cvs_target.width, cvs_target.height);
-            var mona_target_image = new ECvLib.MatHxWx3(imageData_target, cvs_target.height, cvs_target.width);
-            var context_mask = cvs_mask.getContext('2d');
-            context_mask.drawImage(mona_mask.image, 0, 0);
-            var imageData_mask = context_mask.getImageData(0, 0, cvs_mask.width, cvs_mask.height);
-            var mona_mask_image = new ECvLib.MatHxWx3(imageData_mask, cvs_mask.height, cvs_mask.width);
-            var context_source = cvs_source.getContext('2d');
-            context_source.drawImage(leber_source.image, 0, 0);
-            var imageData_source = context_source.getImageData(0, 0, cvs_source.width, cvs_source.height);
-            var leber_source_image = new ECvLib.MatHxWx3(imageData_source, cvs_source.height, cvs_source.width);
-            var maskidx2Corrd = new Array();
-            //record order
-            var Coord2indx = new EMathLib.Matrix(height, width);
-            Coord2indx.setValues(-1);
-            // left, right, top, botton pix in mask or not
-            var if_strict_interior = new Array();
-            var idx = 0;
-            mona_mask_image.forEachIndex(function (j, i) {
-                if (mona_mask_image.getDataByIndexs(j, i)[0] == 255) {
-                    maskidx2Corrd.push([j, i]);
-                    if_strict_interior.push([
-                        j > 0 && mona_mask_image.getDataByIndexs(j - 1, i)[0] == 255,
-                        j < height - 1 && mona_mask_image.getDataByIndexs(j + 1, i)[0] == 255,
-                        i > 0 && mona_mask_image.getDataByIndexs(j, i - 1)[0] == 255,
-                        i < width - 1 && mona_mask_image.getDataByIndexs(j, i + 1)[0] == 255
-                    ]);
-                    Coord2indx.setDataByIndexs(j, i, idx);
-                    idx += 1;
-                }
-            });
-            var N = idx;
-            var b = new EMathLib.Matrix(N, 3);
-            var A = new EMathLib.Matrix(N, N);
-            for (var i = 0; i < N; i++) {
-                A.setDataByIndexs(i, i, 4);
-                var r = maskidx2Corrd[i][0];
-                var c = maskidx2Corrd[i][1];
-                if (if_strict_interior[i][0])
-                    A.setDataByIndexs(i, Coord2indx.getDataByIndexs(r - 1, c), -1);
-                if (if_strict_interior[i][1])
-                    A.setDataByIndexs(i, Coord2indx.getDataByIndexs(r + 1, c), -1);
-                if (if_strict_interior[i][2])
-                    A.setDataByIndexs(i, Coord2indx.getDataByIndexs(r, c - 1), -1);
-                if (if_strict_interior[i][3])
-                    A.setDataByIndexs(i, Coord2indx.getDataByIndexs(r, c + 1), -1);
-            }
-            for (var i = 0; i < N; i++) {
-                var flag = if_strict_interior[i].map(function (b) { return !b; }).map(function (b) { return b ? 1 : 0; });
-                var r = maskidx2Corrd[i][0];
-                var c = maskidx2Corrd[i][1];
-                for (var _c = 0; _c < 3; _c++) {
-                    var sVal = 4 * leber_source_image.getDataByIndexs(r, c)[_c] - leber_source_image.getDataByIndexs(r - 1, c)[_c] - leber_source_image.getDataByIndexs(r + 1, c)[_c] - leber_source_image.getDataByIndexs(r, c - 1)[_c] - leber_source_image.getDataByIndexs(r, c + 1)[_c];
-                    b.setDataByIndexs(i, _c, sVal);
-                    var tVal = b.getDataByIndexs(i, _c) + flag[0] * mona_target_image.getDataByIndexs(r - 1, c)[_c] + flag[1] * mona_target_image.getDataByIndexs(r + 1, c)[_c] + flag[2] * mona_target_image.getDataByIndexs(r, c - 1)[_c] + flag[3] * mona_target_image.getDataByIndexs(r, c + 1)[_c];
-                    b.setDataByIndexs(i, _c, tVal);
-                }
-            }
-            var color_array = new Array();
-            b.forEachCol(function (col) {
-                color_array.push(new EMathLib.Vector(col.length, col));
-            });
-            var R = EMathLib.conjugate_grad(A, color_array[0]);
-            var G = EMathLib.conjugate_grad(A, color_array[1]);
-            var B = EMathLib.conjugate_grad(A, color_array[2]);
-            var synthesis_image = mona_target_image;
-            for (var i = 0; i < N; i++) {
-                var r = maskidx2Corrd[i][0];
-                var c = maskidx2Corrd[i][1];
-                var color = [clip(R.data()[i], 0, 255), clip(G.data()[i], 0, 255), clip(B.data()[i], 0, 255)];
-                synthesis_image.setDataByIndexs(r, c, color);
-            }
-            cvs_synthesis.height = height;
-            cvs_synthesis.width = width;
-            var context_synthesis = cvs_synthesis.getContext('2d');
-            context_synthesis.clearRect(0, 0, width, height);
-            var imgData = context_synthesis.getImageData(0, 0, width, height);
-            for (var j = 0; j < height; j++) {
-                for (var i = 0; i < width; i++) {
-                    var index = (j * width + i) * 4;
-                    var Val_r = synthesis_image.R().getDataByIndexs(j, i);
-                    var Val_g = synthesis_image.G().getDataByIndexs(j, i);
-                    var Val_b = synthesis_image.B().getDataByIndexs(j, i);
-                    imgData.data[index + 0] = Val_r;
-                    imgData.data[index + 1] = Val_g;
-                    imgData.data[index + 2] = Val_b;
-                    imgData.data[index + 3] = 255;
-                }
-            }
-            context_synthesis.putImageData(imgData, 0, 0);
-        };
-    };
-};
+var ImagesLoadSys = new ECvLib.SimpleImageLoadSystem(paths, function (images) {
+    var mona_target = images.get("mona_target");
+    var mona_mask = images.get("mona_mask");
+    var leber_source = images.get("leber_source");
+    cvs_target.height = mona_target.height;
+    cvs_target.width = mona_target.width;
+    var height = cvs_target.height;
+    var width = cvs_target.width;
+    cvs_mask.height = mona_mask.height;
+    cvs_mask.width = mona_mask.width;
+    cvs_source.height = leber_source.height;
+    cvs_source.width = leber_source.width;
+    var context_target = cvs_target.getContext('2d');
+    context_target.drawImage(mona_target, 0, 0);
+    var imageData_target = context_target.getImageData(0, 0, cvs_target.width, cvs_target.height);
+    var mona_target_image = new ECvLib.MatHxWx3(imageData_target, cvs_target.height, cvs_target.width);
+    var context_mask = cvs_mask.getContext('2d');
+    context_mask.drawImage(mona_mask, 0, 0);
+    var imageData_mask = context_mask.getImageData(0, 0, cvs_mask.width, cvs_mask.height);
+    var mona_mask_image = new ECvLib.MatHxWx3(imageData_mask, cvs_mask.height, cvs_mask.width);
+    var context_source = cvs_source.getContext('2d');
+    context_source.drawImage(leber_source, 0, 0);
+    var imageData_source = context_source.getImageData(0, 0, cvs_source.width, cvs_source.height);
+    var leber_source_image = new ECvLib.MatHxWx3(imageData_source, cvs_source.height, cvs_source.width);
+    var maskidx2Corrd = new Array();
+    //record order
+    var Coord2indx = new EMathLib.Matrix(height, width);
+    Coord2indx.setValues(-1);
+    // left, right, top, botton pix in mask or not
+    var if_strict_interior = new Array();
+    var idx = 0;
+    mona_mask_image.forEachIndex(function (j, i) {
+        if (mona_mask_image.getDataByIndexs(j, i)[0] == 255) {
+            maskidx2Corrd.push([j, i]);
+            if_strict_interior.push([
+                j > 0 && mona_mask_image.getDataByIndexs(j - 1, i)[0] == 255,
+                j < height - 1 && mona_mask_image.getDataByIndexs(j + 1, i)[0] == 255,
+                i > 0 && mona_mask_image.getDataByIndexs(j, i - 1)[0] == 255,
+                i < width - 1 && mona_mask_image.getDataByIndexs(j, i + 1)[0] == 255
+            ]);
+            Coord2indx.setDataByIndexs(j, i, idx);
+            idx += 1;
+        }
+    });
+    console.log("converted image coordniates to index...");
+    var N = idx;
+    var b = new EMathLib.Matrix(N, 3);
+    var A = new EMathLib.Matrix(N, N);
+    for (var i = 0; i < N; i++) {
+        A.setDataByIndexs(i, i, 4);
+        var r = maskidx2Corrd[i][0];
+        var c = maskidx2Corrd[i][1];
+        if (if_strict_interior[i][0])
+            A.setDataByIndexs(i, Coord2indx.getDataByIndexs(r - 1, c), -1);
+        if (if_strict_interior[i][1])
+            A.setDataByIndexs(i, Coord2indx.getDataByIndexs(r + 1, c), -1);
+        if (if_strict_interior[i][2])
+            A.setDataByIndexs(i, Coord2indx.getDataByIndexs(r, c - 1), -1);
+        if (if_strict_interior[i][3])
+            A.setDataByIndexs(i, Coord2indx.getDataByIndexs(r, c + 1), -1);
+    }
+    for (var i = 0; i < N; i++) {
+        var flag = if_strict_interior[i].map(function (b) { return !b; }).map(function (b) { return b ? 1 : 0; });
+        var r = maskidx2Corrd[i][0];
+        var c = maskidx2Corrd[i][1];
+        for (var _c = 0; _c < 3; _c++) {
+            var sVal = 4 * leber_source_image.getDataByIndexs(r, c)[_c] - leber_source_image.getDataByIndexs(r - 1, c)[_c] - leber_source_image.getDataByIndexs(r + 1, c)[_c] - leber_source_image.getDataByIndexs(r, c - 1)[_c] - leber_source_image.getDataByIndexs(r, c + 1)[_c];
+            b.setDataByIndexs(i, _c, sVal);
+            var tVal = b.getDataByIndexs(i, _c) + flag[0] * mona_target_image.getDataByIndexs(r - 1, c)[_c] + flag[1] * mona_target_image.getDataByIndexs(r + 1, c)[_c] + flag[2] * mona_target_image.getDataByIndexs(r, c - 1)[_c] + flag[3] * mona_target_image.getDataByIndexs(r, c + 1)[_c];
+            b.setDataByIndexs(i, _c, tVal);
+        }
+    }
+    console.log("initialized A matrix and b array...");
+    var color_array = new Array();
+    b.forEachCol(function (col) {
+        color_array.push(new EMathLib.Vector(col.length, col));
+    });
+    var R = EMathLib.conjugate_grad(A, color_array[0]);
+    var G = EMathLib.conjugate_grad(A, color_array[1]);
+    var B = EMathLib.conjugate_grad(A, color_array[2]);
+    var synthesis_image = mona_target_image;
+    for (var i = 0; i < N; i++) {
+        var r = maskidx2Corrd[i][0];
+        var c = maskidx2Corrd[i][1];
+        var color = [clip(R.data()[i], 0, 255), clip(G.data()[i], 0, 255), clip(B.data()[i], 0, 255)];
+        synthesis_image.setDataByIndexs(r, c, color);
+    }
+    cvs_synthesis.height = height;
+    cvs_synthesis.width = width;
+    var context_synthesis = cvs_synthesis.getContext('2d');
+    context_synthesis.clearRect(0, 0, width, height);
+    var imgData = context_synthesis.getImageData(0, 0, width, height);
+    for (var j = 0; j < height; j++) {
+        for (var i = 0; i < width; i++) {
+            var index = (j * width + i) * 4;
+            var Val_r = synthesis_image.R().getDataByIndexs(j, i);
+            var Val_g = synthesis_image.G().getDataByIndexs(j, i);
+            var Val_b = synthesis_image.B().getDataByIndexs(j, i);
+            imgData.data[index + 0] = Val_r;
+            imgData.data[index + 1] = Val_g;
+            imgData.data[index + 2] = Val_b;
+            imgData.data[index + 3] = 255;
+        }
+    }
+    context_synthesis.putImageData(imgData, 0, 0);
+    console.log("poisson image editing finished...");
+});

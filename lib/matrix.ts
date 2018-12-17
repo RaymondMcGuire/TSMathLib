@@ -7,7 +7,7 @@
  * ========================================================================= */
 import {muldec} from './math_utils'
 import { Vector } from './vector'
-import {MatrixIndex,MatrixData,MatrixRow} from './interface'
+import {MatrixIndex,MatrixData,MatrixSplit} from './interface'
 export class Matrix {
 
     private _elements: Array<number>;
@@ -80,13 +80,23 @@ export class Matrix {
         }
     }
 
-    forEachRow(row: MatrixRow) {
+    forEachRow(row: MatrixSplit) {
         for (var _i = 0; _i < this.rows(); _i++) {
             let row_array = Array<number>(this.cols());
             for (var _j = 0; _j < this.cols(); _j++) {
                 row_array[_j] = this.getDataByIndexs(_i, _j);
             }
             row(row_array);
+        }
+    }
+
+    forEachCol(col: MatrixSplit) {
+        for (var _i = 0; _i < this.cols(); _i++) {
+            let col_array = Array<number>(this.rows());
+            for (var _j = 0; _j < this.rows(); _j++) {
+                col_array[_j] = this.getDataByIndexs(_j, _i);
+            }
+            col(col_array);
         }
     }
 
@@ -100,6 +110,18 @@ export class Matrix {
 
     ones() {
         this.set(this._ones());
+    }
+
+    private _values(v:number) {
+        let m = new Matrix(this.rows(), this.cols());
+        m.forEachIndex((i, j) => {
+            m.setDataByIndexs(i, j, v);
+        })
+        return m;
+    }
+
+    setValues(v:number) {
+        this.set(this._values(v));
     }
 
     private _random() {

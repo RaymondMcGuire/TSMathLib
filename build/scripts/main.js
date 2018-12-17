@@ -28,7 +28,7 @@ var EMathLib;
 /// <reference path="./math_utils.ts" />
 var EMathLib;
 (function (EMathLib) {
-    var Vector = (function () {
+    var Vector = /** @class */ (function () {
         //constructs vector with parameters or zero
         function Vector(dimension, params) {
             this._dimension = dimension;
@@ -254,7 +254,7 @@ var EMathLib;
             this._elements[idx] = val;
         };
         return Vector;
-    })();
+    }());
     EMathLib.Vector = Vector;
 })(EMathLib || (EMathLib = {}));
 /* =========================================================================
@@ -280,7 +280,7 @@ var EMathLib;
 /// <reference path="./interface.ts" />
 var EMathLib;
 (function (EMathLib) {
-    var Matrix = (function () {
+    var Matrix = /** @class */ (function () {
         //constructs matrix with parameters or zero
         function Matrix(M, N, params) {
             this._M = M;
@@ -345,6 +345,15 @@ var EMathLib;
                 row(row_array);
             }
         };
+        Matrix.prototype.forEachCol = function (col) {
+            for (var _i = 0; _i < this.cols(); _i++) {
+                var col_array = Array(this.rows());
+                for (var _j = 0; _j < this.rows(); _j++) {
+                    col_array[_j] = this.getDataByIndexs(_j, _i);
+                }
+                col(col_array);
+            }
+        };
         Matrix.prototype._ones = function () {
             var m = new Matrix(this.rows(), this.cols());
             m.forEachIndex(function (i, j) {
@@ -354,6 +363,16 @@ var EMathLib;
         };
         Matrix.prototype.ones = function () {
             this.set(this._ones());
+        };
+        Matrix.prototype._values = function (v) {
+            var m = new Matrix(this.rows(), this.cols());
+            m.forEachIndex(function (i, j) {
+                m.setDataByIndexs(i, j, v);
+            });
+            return m;
+        };
+        Matrix.prototype.setValues = function (v) {
+            this.set(this._values(v));
         };
         Matrix.prototype._random = function () {
             var m = new Matrix(this.rows(), this.cols());
@@ -446,7 +465,7 @@ var EMathLib;
             console.log(print_string);
         };
         return Matrix;
-    })();
+    }());
     EMathLib.Matrix = Matrix;
 })(EMathLib || (EMathLib = {}));
 /// <reference path="./matrix.ts" />
@@ -496,28 +515,198 @@ var EMathLib;
     }
     EMathLib.conjugate_grad = conjugate_grad;
 })(EMathLib || (EMathLib = {}));
-/// <reference path="../lib/conjugate_grad.ts" />
-var image = new Image();
-image.src = "./images/mona-target.jpg";
-image.onload = function () {
-    var cvs = document.getElementById("cvs");
-    cvs.height = image.height;
-    cvs.width = image.width;
-    var context = cvs.getContext('2d');
-    context.drawImage(image, 0, 0);
-    var imageData = context.getImageData(0, 0, cvs.width, cvs.height);
-    //console.log(imageData);
-    var imageDataBuffer = new Array(cvs.height);
-    for (var j = 0; j < cvs.height; j++) {
-        imageDataBuffer[j] = new Array(cvs.width);
-        for (var i = 0; i < cvs.width; i++) {
-            var index = (j * cvs.width + i) * 4;
-            imageDataBuffer[j][i] = new Array(4);
-            imageDataBuffer[j][i][0] = imageData.data[index + 0];
-            imageDataBuffer[j][i][1] = imageData.data[index + 1];
-            imageDataBuffer[j][i][2] = imageData.data[index + 2];
-            imageDataBuffer[j][i][3] = imageData.data[index + 3];
+/// <reference path="../lib/matrix.ts" />
+/// <reference path="../lib/interface.ts" />
+var ECvLib;
+(function (ECvLib) {
+    var MatHxWx3 = /** @class */ (function () {
+        function MatHxWx3(imData, height, width) {
+            this._CHANNEL = 3;
+            this._H = height;
+            this._W = width;
+            var r = new EMathLib.Matrix(height, width);
+            var g = new EMathLib.Matrix(height, width);
+            var b = new EMathLib.Matrix(height, width);
+            for (var _h = 0; _h < height; _h++) {
+                for (var _w = 0; _w < width; _w++) {
+                    var index = (_h * width + _w) * 4;
+                    r.setDataByIndexs(_h, _w, imData.data[index + 0]);
+                    g.setDataByIndexs(_h, _w, imData.data[index + 1]);
+                    b.setDataByIndexs(_h, _w, imData.data[index + 2]);
+                }
+            }
+            this._DATA = new Array(this._CHANNEL);
+            this._DATA[0] = r;
+            this._DATA[1] = g;
+            this._DATA[2] = b;
         }
-    }
-    console.log(imageDataBuffer);
+        MatHxWx3.prototype.forEachIndex = function (indexs) {
+            for (var _j = 0; _j < this._H; _j++) {
+                for (var _i = 0; _i < this._W; _i++) {
+                    indexs(_j, _i);
+                }
+            }
+        };
+        MatHxWx3.prototype.getDataByIndexs = function (j, i) {
+            var r = this.R().getDataByIndexs(j, i);
+            var g = this.G().getDataByIndexs(j, i);
+            var b = this.B().getDataByIndexs(j, i);
+            return [r, g, b];
+        };
+        MatHxWx3.prototype.setDataByIndexs = function (j, i, v) {
+            this.R().setDataByIndexs(j, i, v[0]);
+            this.G().setDataByIndexs(j, i, v[1]);
+            this.B().setDataByIndexs(j, i, v[2]);
+        };
+        MatHxWx3.prototype.shape = function () {
+            return [this._H, this._W, this._CHANNEL];
+        };
+        MatHxWx3.prototype.R = function () {
+            return this._DATA[0];
+        };
+        MatHxWx3.prototype.G = function () {
+            return this._DATA[1];
+        };
+        MatHxWx3.prototype.B = function () {
+            return this._DATA[2];
+        };
+        return MatHxWx3;
+    }());
+    ECvLib.MatHxWx3 = MatHxWx3;
+    var ImLoad = /** @class */ (function () {
+        function ImLoad(path) {
+            this.image = new Image();
+            this.image.src = path;
+        }
+        return ImLoad;
+    }());
+    ECvLib.ImLoad = ImLoad;
+})(ECvLib || (ECvLib = {}));
+/// <reference path="../lib/conjugate_grad.ts" />
+/// <reference path="../lib/vector.ts" />
+/// <reference path="../lib/matrix.ts" />
+/// <reference path="../cv/im.ts" />
+var cvs_target = document.getElementById("cvs_target");
+var cvs_mask = document.getElementById("cvs_mask");
+var cvs_source = document.getElementById("cvs_source");
+var cvs_synthesis = document.getElementById("cvs_synthesis");
+var mona_target = new ECvLib.ImLoad("./images/mona-target.jpg");
+var mona_mask = new ECvLib.ImLoad("./images/mona-mask.jpg");
+var leber_source = new ECvLib.ImLoad("./images/leber-source.jpg");
+function clip(v, min, max) {
+    if (v < min)
+        v = min;
+    if (v > max)
+        v = max;
+    return v;
+}
+//load image
+mona_target.image.onload = function () {
+    console.log("target image loaded");
+    mona_mask.image.onload = function () {
+        console.log("mask image loaded");
+        leber_source.image.onload = function () {
+            console.log("source image loaded");
+            //get image data from canvas
+            cvs_target.height = mona_target.image.height;
+            cvs_target.width = mona_target.image.width;
+            var height = cvs_target.height;
+            var width = cvs_target.width;
+            cvs_mask.height = mona_mask.image.height;
+            cvs_mask.width = mona_mask.image.width;
+            cvs_source.height = leber_source.image.height;
+            cvs_source.width = leber_source.image.width;
+            var context_target = cvs_target.getContext('2d');
+            context_target.drawImage(mona_target.image, 0, 0);
+            var imageData_target = context_target.getImageData(0, 0, cvs_target.width, cvs_target.height);
+            var mona_target_image = new ECvLib.MatHxWx3(imageData_target, cvs_target.height, cvs_target.width);
+            var context_mask = cvs_mask.getContext('2d');
+            context_mask.drawImage(mona_mask.image, 0, 0);
+            var imageData_mask = context_mask.getImageData(0, 0, cvs_mask.width, cvs_mask.height);
+            var mona_mask_image = new ECvLib.MatHxWx3(imageData_mask, cvs_mask.height, cvs_mask.width);
+            var context_source = cvs_source.getContext('2d');
+            context_source.drawImage(leber_source.image, 0, 0);
+            var imageData_source = context_source.getImageData(0, 0, cvs_source.width, cvs_source.height);
+            var leber_source_image = new ECvLib.MatHxWx3(imageData_source, cvs_source.height, cvs_source.width);
+            var maskidx2Corrd = new Array();
+            //record order
+            var Coord2indx = new EMathLib.Matrix(height, width);
+            Coord2indx.setValues(-1);
+            // left, right, top, botton pix in mask or not
+            var if_strict_interior = new Array();
+            var idx = 0;
+            mona_mask_image.forEachIndex(function (j, i) {
+                if (mona_mask_image.getDataByIndexs(j, i)[0] == 255) {
+                    maskidx2Corrd.push([j, i]);
+                    if_strict_interior.push([
+                        j > 0 && mona_mask_image.getDataByIndexs(j - 1, i)[0] == 255,
+                        j < height - 1 && mona_mask_image.getDataByIndexs(j + 1, i)[0] == 255,
+                        i > 0 && mona_mask_image.getDataByIndexs(j, i - 1)[0] == 255,
+                        i < width - 1 && mona_mask_image.getDataByIndexs(j, i + 1)[0] == 255
+                    ]);
+                    Coord2indx.setDataByIndexs(j, i, idx);
+                    idx += 1;
+                }
+            });
+            var N = idx;
+            var b = new EMathLib.Matrix(N, 3);
+            var A = new EMathLib.Matrix(N, N);
+            for (var i = 0; i < N; i++) {
+                A.setDataByIndexs(i, i, 4);
+                var r = maskidx2Corrd[i][0];
+                var c = maskidx2Corrd[i][1];
+                if (if_strict_interior[i][0])
+                    A.setDataByIndexs(i, Coord2indx.getDataByIndexs(r - 1, c), -1);
+                if (if_strict_interior[i][1])
+                    A.setDataByIndexs(i, Coord2indx.getDataByIndexs(r + 1, c), -1);
+                if (if_strict_interior[i][2])
+                    A.setDataByIndexs(i, Coord2indx.getDataByIndexs(r, c - 1), -1);
+                if (if_strict_interior[i][3])
+                    A.setDataByIndexs(i, Coord2indx.getDataByIndexs(r, c + 1), -1);
+            }
+            for (var i = 0; i < N; i++) {
+                var flag = if_strict_interior[i].map(function (b) { return !b; }).map(function (b) { return b ? 1 : 0; });
+                var r = maskidx2Corrd[i][0];
+                var c = maskidx2Corrd[i][1];
+                for (var _c = 0; _c < 3; _c++) {
+                    var sVal = 4 * leber_source_image.getDataByIndexs(r, c)[_c] - leber_source_image.getDataByIndexs(r - 1, c)[_c] - leber_source_image.getDataByIndexs(r + 1, c)[_c] - leber_source_image.getDataByIndexs(r, c - 1)[_c] - leber_source_image.getDataByIndexs(r, c + 1)[_c];
+                    b.setDataByIndexs(i, _c, sVal);
+                    var tVal = b.getDataByIndexs(i, _c) + flag[0] * mona_target_image.getDataByIndexs(r - 1, c)[_c] + flag[1] * mona_target_image.getDataByIndexs(r + 1, c)[_c] + flag[2] * mona_target_image.getDataByIndexs(r, c - 1)[_c] + flag[3] * mona_target_image.getDataByIndexs(r, c + 1)[_c];
+                    b.setDataByIndexs(i, _c, tVal);
+                }
+            }
+            var color_array = new Array();
+            b.forEachCol(function (col) {
+                color_array.push(new EMathLib.Vector(col.length, col));
+            });
+            var R = EMathLib.conjugate_grad(A, color_array[0]);
+            var G = EMathLib.conjugate_grad(A, color_array[1]);
+            var B = EMathLib.conjugate_grad(A, color_array[2]);
+            var synthesis_image = mona_target_image;
+            for (var i = 0; i < N; i++) {
+                var r = maskidx2Corrd[i][0];
+                var c = maskidx2Corrd[i][1];
+                var color = [clip(R.data()[i], 0, 255), clip(G.data()[i], 0, 255), clip(B.data()[i], 0, 255)];
+                synthesis_image.setDataByIndexs(r, c, color);
+            }
+            cvs_synthesis.height = height;
+            cvs_synthesis.width = width;
+            var context_synthesis = cvs_synthesis.getContext('2d');
+            context_synthesis.clearRect(0, 0, width, height);
+            var imgData = context_synthesis.getImageData(0, 0, width, height);
+            for (var j = 0; j < height; j++) {
+                for (var i = 0; i < width; i++) {
+                    var index = (j * width + i) * 4;
+                    var Val_r = synthesis_image.R().getDataByIndexs(j, i);
+                    var Val_g = synthesis_image.G().getDataByIndexs(j, i);
+                    var Val_b = synthesis_image.B().getDataByIndexs(j, i);
+                    imgData.data[index + 0] = Val_r;
+                    imgData.data[index + 1] = Val_g;
+                    imgData.data[index + 2] = Val_b;
+                    imgData.data[index + 3] = 255;
+                }
+            }
+            context_synthesis.putImageData(imgData, 0, 0);
+        };
+    };
 };

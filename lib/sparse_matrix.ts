@@ -1,36 +1,30 @@
 /* =========================================================================
  *
- *  matrix.ts
- *  M*N dimention matrix
+ *  sparse_matrix.ts
+ *  M*N dimention sparse matrix
  * ========================================================================= */
 import {muldec} from './math_utils'
 import { Vector } from './vector'
 import {MatrixIndex,MatrixData,MatrixSplit} from './interface'
-export class Matrix {
+import {HashSet} from '../ds/hashset'
+export class SparseMatrix {
 
-    private _elements: Array<number>;
+    private _elements: Array<[number,number,number]>; //row,col,data
     private _M: number;
     private _N: number;
     private _size: number;
 
     //constructs matrix with parameters or zero
-    constructor(M: number, N: number, params?: Array<number>) {
+    constructor(M: number, N: number, params: Array<[number,number,number]>) {
         this._M = M;
         this._N = N;
-        this._size = M * N;
-        if (params == undefined) {
-            //init M*N matrix data,setting all 0
-            this._elements = new Array<number>(this.size());
-            for (var _i = 0; _i < this.size(); _i++) {
-                this._elements[_i] = 0;
-            }
-        } else {
-            //TODO check size
-            this._elements = new Array<number>(this.size());
-            for (var _i = 0; _i < params.length; _i++) {
-                this._elements[_i] = params[_i];
-            }
+        this._size = params.length;
+            
+        this._elements = new Array<[number,number,number]>(this.size());
+        for (var _i = 0; _i < params.length; _i++) {
+            this._elements[_i] = params[_i];
         }
+        
     }
 
     set(params: Matrix) {

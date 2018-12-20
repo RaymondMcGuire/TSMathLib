@@ -267,6 +267,234 @@ var EMathLib;
     ;
     ;
     ;
+    ;
+})(EMathLib || (EMathLib = {}));
+/* =========================================================================
+ *
+ *  sparse_matrix.ts
+ *  M*N dimention sparse matrix
+ * ========================================================================= */
+/// <reference path="./vector.ts" />
+/// <reference path="./matrix.ts" />
+/// <reference path="./interface.ts" />
+var EMathLib;
+(function (EMathLib) {
+    var SparseMatrix = /** @class */ (function () {
+        //constructs matrix with parameters or zero
+        function SparseMatrix(M, N, params) {
+            this._M = M;
+            this._N = N;
+            if (params == undefined) {
+                this._size = 0;
+                this._elements = new Array();
+            }
+            else {
+                this._size = params.length;
+                this._elements = new Array(this.size());
+                for (var _i = 0; _i < params.length; _i++) {
+                    this._elements[_i] = params[_i];
+                }
+                this._elements.sort(function (a, b) {
+                    if (a[0] < b[0])
+                        return -1;
+                    else if (a[0] > b[0])
+                        return 1;
+                    else if (a[0] == b[0]) {
+                        if (a[1] < b[1])
+                            return -1;
+                        else if (a[1] > b[1])
+                            return 1;
+                    }
+                    return 0;
+                });
+            }
+        }
+        SparseMatrix.prototype.size = function () { return this._size; };
+        SparseMatrix.prototype.rows = function () { return this._M; };
+        SparseMatrix.prototype.cols = function () { return this._N; };
+        SparseMatrix.prototype.data = function () { return this._elements; };
+        SparseMatrix.prototype.set = function (params) {
+            if (params.rows() != this.rows() || params.cols() != this.cols()) {
+                console.log("dimension is not correct!");
+                return undefined;
+            }
+            this._size = params.size();
+            this._elements = new Array(this.size());
+            for (var _i = 0; _i < params.size(); _i++) {
+                this._elements[_i] = params.data()[_i];
+            }
+        };
+        SparseMatrix.prototype.forEachData = function (smd) {
+            for (var _i = 0; _i < this.size(); _i++) {
+                smd(this.data()[_i]);
+            }
+        };
+        SparseMatrix.prototype.forEachIndex = function (indexs) {
+            for (var _e = 0; _e < this.size(); _e++) {
+                var e = this.data()[_e];
+                indexs(e[0], e[1]);
+            }
+        };
+        SparseMatrix.prototype._searchElemByRow = function (row) {
+            var e = this.data();
+            for (var _i = 0; _i < e.length; _i++) {
+                if (e[_i][0] == row) {
+                    return _i;
+                }
+            }
+            return -1;
+        };
+        SparseMatrix.prototype._searchElemByIndexs = function (row, col) {
+            var e = this.data();
+            for (var _i = 0; _i < e.length; _i++) {
+                if (e[_i][0] == row && e[_i][1] == col) {
+                    return _i;
+                }
+            }
+            return -1;
+        };
+        SparseMatrix.prototype.getDataByIndexs = function (row, col) {
+            var idx = this._searchElemByIndexs(row, col);
+            if (idx == -1)
+                return 0;
+            return this.data()[idx][2];
+        };
+        SparseMatrix.prototype.setDataByRowCol = function (row, col, d) {
+            var idx = this._searchElemByIndexs(row, col);
+            if (idx == -1) {
+                this._size += 1;
+                this.data().push([row, col, d]);
+            }
+            else {
+                this.data()[idx][2] = d;
+            }
+        };
+        SparseMatrix.prototype.addDataByIndexs = function (row, col, d) {
+            this._size += 1;
+            this.data().push([row, col, d]);
+        };
+        SparseMatrix.prototype.setTupleByIndexs = function (n) {
+            var idx = this._searchElemByIndexs(n[0], n[1]);
+            if (idx == -1) {
+                this._size += 1;
+                this.data().push(n);
+            }
+            else {
+                this.data()[idx] = n;
+            }
+        };
+        SparseMatrix.prototype._transpose = function () {
+            var _this = this;
+            var m = new SparseMatrix(this.rows(), this.cols());
+            this.forEachIndex(function (i, j) {
+                m.setTupleByIndexs([j, i, _this.getDataByIndexs(i, j)]);
+            });
+            m.data().sort(function (a, b) { if (a[0] < b[0])
+                return -1;
+            else if (a[0] > b[0])
+                return 1;
+            else if (a[0] == b[0]) {
+                if (a[1] < b[1])
+                    return -1;
+                else if (a[1] > b[1])
+                    return 1;
+            } return 0; });
+            return m;
+        };
+        SparseMatrix.prototype.transpose = function () {
+            this.set(this._transpose());
+        };
+        SparseMatrix.prototype.mulMat = function (m) {
+            //TODO check matrix shape is right or not
+            //A.cols == B.rows
+            var newM = this.rows();
+            var newN = m.cols();
+            var mm = new SparseMatrix(newM, newN);
+            //collect row->col
+            var rowColMapping = new Array(this.rows());
+            for (var _i = 0; _i < this.rows(); _i++)
+                rowColMapping[_i] = new Array();
+            this.forEachData(function (d) {
+                var r = d[0];
+                var c = d[1];
+                rowColMapping[r].push(c);
+            });
+            for (var _c = 0; _c < m.cols(); _c++) {
+                var idx = 0;
+                for (var _r = 0; _r < this.rows(); _r++) {
+                    if (rowColMapping[_r].length == 0)
+                        continue;
+                    var d = 0;
+                    for (var _rc = 0; _rc < rowColMapping[_r].length; _rc++) {
+                        var c = rowColMapping[_r][_rc];
+                        var v = this.data()[idx][2];
+                        idx++;
+                        d += EMathLib.muldec(v, m.getDataByIndexs(c, _c));
+                    }
+                    if (d == 0)
+                        continue;
+                    mm.addDataByIndexs(_r, _c, d);
+                }
+            }
+            mm.data().sort(function (a, b) { if (a[0] < b[0])
+                return -1;
+            else if (a[0] > b[0])
+                return 1;
+            else if (a[0] == b[0]) {
+                if (a[1] < b[1])
+                    return -1;
+                else if (a[1] > b[1])
+                    return 1;
+            } return 0; });
+            return mm;
+        };
+        SparseMatrix.prototype.spMat2Mat = function () {
+            var m = new EMathLib.Matrix(this.rows(), this.cols());
+            this.forEachData(function (d) {
+                m.setDataByIndexs(d[0], d[1], d[2]);
+            });
+            return m;
+        };
+        SparseMatrix.prototype.spMat2Vec = function () {
+            var _this = this;
+            if (this.rows() != 1 && this.cols() != 1) {
+                console.log("can not convert to vector!");
+                return undefined;
+            }
+            var _size = this.rows() * this.cols();
+            var data = new Array(_size);
+            for (var _i = 0; _i < _size; _i++) {
+                data[_i] = 0;
+            }
+            this.forEachData(function (d) {
+                var idx = d[_this.rows() == 1 ? 1 : 0];
+                data[idx] = d[2];
+            });
+            var Vec = new EMathLib.Vector(_size, data);
+            return Vec;
+        };
+        SparseMatrix.prototype.mulVec = function (v) {
+            //check shape
+            if (v.size() != this.cols()) {
+                console.log("vector shape is not right!");
+                return undefined;
+            }
+            var vec2mat = new EMathLib.Matrix(v.size(), 1, v.data());
+            var mat = this.mulMat(vec2mat);
+            var vec = mat.spMat2Vec();
+            return vec;
+        };
+        SparseMatrix.prototype.printSparseMatrix = function () {
+            var print_string = "";
+            this.forEachData((function (r) {
+                print_string += "[" + r + "]";
+            }));
+            print_string += "";
+            console.log(print_string);
+        };
+        return SparseMatrix;
+    }());
+    EMathLib.SparseMatrix = SparseMatrix;
 })(EMathLib || (EMathLib = {}));
 /* =========================================================================
  *
@@ -277,6 +505,7 @@ var EMathLib;
  * ========================================================================= */
 /// <reference path="./math_utils.ts" />
 /// <reference path="./vector.ts" />
+/// <reference path="./sparse_matrix.ts" />
 /// <reference path="./interface.ts" />
 var EMathLib;
 (function (EMathLib) {
@@ -391,6 +620,17 @@ var EMathLib;
                 m.setDataByIndexs(i, j, _this.getDataByIndexs(j, i));
             });
             return m;
+        };
+        Matrix.prototype.mat2SpMat = function () {
+            var _this = this;
+            var data = new Array();
+            this.forEachIndex(function (i, j) {
+                var d = _this.getDataByIndexs(i, j);
+                if (d != 0) {
+                    data.push([i, j, d]);
+                }
+            });
+            return new EMathLib.SparseMatrix(this.rows(), this.cols(), data);
         };
         Matrix.prototype.mat2Vec = function () {
             if (this.rows() != 1 && this.cols() != 1) {
@@ -514,6 +754,33 @@ var EMathLib;
         return x;
     }
     EMathLib.conjugate_grad = conjugate_grad;
+    function conjugate_grad_spMatrix(A, b, x) {
+        //TODO:judge A is a "positive semi-definite matrix", tip:using "Cholesky decomposition"
+        var n = b.size();
+        if (x == undefined) {
+            x = new EMathLib.Vector(b.size());
+            x.setOne();
+        }
+        var r = A.mulVec(x).sub(b);
+        var p = r.mul(-1);
+        var r_k_norm = r.dot(r);
+        for (var _i = 0; _i < 2 * n; _i++) {
+            var Ap = A.mulVec(p);
+            var alpha = r_k_norm / p.dot(Ap);
+            x.iadd(p.mul(alpha));
+            r.iadd(Ap.mul(alpha));
+            var r_kplus1_norm = r.dot(r);
+            var beta = r_kplus1_norm / r_k_norm;
+            r_k_norm = r_kplus1_norm;
+            if (r_kplus1_norm < 1e-5) {
+                //console.log('compute finished!');
+                break;
+            }
+            p = p.mul(beta).sub(r);
+        }
+        return x;
+    }
+    EMathLib.conjugate_grad_spMatrix = conjugate_grad_spMatrix;
 })(EMathLib || (EMathLib = {}));
 var EDsLib;
 (function (EDsLib) {
@@ -630,12 +897,41 @@ var ECvLib;
     }());
     ECvLib.MatHxWx3 = MatHxWx3;
 })(ECvLib || (ECvLib = {}));
+var EUtilsLib;
+(function (EUtilsLib) {
+    var TimeRecorder = /** @class */ (function () {
+        function TimeRecorder() {
+            this._start = new Date();
+            this._end = new Date();
+            this._totalTime = 0;
+        }
+        TimeRecorder.prototype.start = function () {
+            this._start = new Date();
+        };
+        TimeRecorder.prototype.end = function () {
+            this._end = new Date();
+        };
+        TimeRecorder.prototype.printTotalTime = function () {
+            console.log("Total time:" + Math.round(this._totalTime));
+        };
+        TimeRecorder.prototype.printElapsedTime = function () {
+            var timeDiff = this._end - this._start; //in ms
+            var seconds = timeDiff / 1000;
+            this._totalTime += seconds;
+            console.log("elapsed time:" + seconds + " seconds");
+        };
+        return TimeRecorder;
+    }());
+    EUtilsLib.TimeRecorder = TimeRecorder;
+})(EUtilsLib || (EUtilsLib = {}));
 /// <reference path="../lib/conjugate_grad.ts" />
 /// <reference path="../lib/vector.ts" />
 /// <reference path="../lib/matrix.ts" />
 /// <reference path="../ds/hashset.ts" />
 /// <reference path="../cv/s_imload.ts" />
 /// <reference path="../cv/matHW3.ts" />
+/// <reference path="../utils/timer.ts" />
+var timer = new EUtilsLib.TimeRecorder();
 var cvs_target = document.getElementById("cvs_target");
 var cvs_mask = document.getElementById("cvs_mask");
 var cvs_source = document.getElementById("cvs_source");
@@ -652,6 +948,7 @@ function clip(v, min, max) {
     return v;
 }
 var ImagesLoadSys = new ECvLib.SimpleImageLoadSystem(paths, function (images) {
+    timer.start();
     var mona_target = images.get("mona_target");
     var mona_mask = images.get("mona_mask");
     var leber_source = images.get("leber_source");
@@ -695,7 +992,10 @@ var ImagesLoadSys = new ECvLib.SimpleImageLoadSystem(paths, function (images) {
             idx += 1;
         }
     });
+    timer.end();
+    timer.printElapsedTime();
     console.log("converted image coordniates to index...");
+    timer.start();
     var N = idx;
     var b = new EMathLib.Matrix(N, 3);
     var A = new EMathLib.Matrix(N, N);
@@ -723,14 +1023,24 @@ var ImagesLoadSys = new ECvLib.SimpleImageLoadSystem(paths, function (images) {
             b.setDataByIndexs(i, _c, tVal);
         }
     }
+    timer.end();
+    timer.printElapsedTime();
     console.log("initialized A matrix and b array...");
+    timer.start();
     var color_array = new Array();
     b.forEachCol(function (col) {
         color_array.push(new EMathLib.Vector(col.length, col));
     });
-    var R = EMathLib.conjugate_grad(A, color_array[0]);
-    var G = EMathLib.conjugate_grad(A, color_array[1]);
-    var B = EMathLib.conjugate_grad(A, color_array[2]);
+    //85s
+    // let R = EMathLib.conjugate_grad(A, color_array[0]);
+    // let G = EMathLib.conjugate_grad(A, color_array[1]);
+    // let B = EMathLib.conjugate_grad(A, color_array[2]);
+    //1s
+    //conver matrix A to sparse matrix
+    var A_sp = A.mat2SpMat();
+    var R = EMathLib.conjugate_grad_spMatrix(A_sp, color_array[0]);
+    var G = EMathLib.conjugate_grad_spMatrix(A_sp, color_array[1]);
+    var B = EMathLib.conjugate_grad_spMatrix(A_sp, color_array[2]);
     var synthesis_image = mona_target_image;
     for (var i = 0; i < N; i++) {
         var r = maskidx2Corrd[i][0];
@@ -756,5 +1066,8 @@ var ImagesLoadSys = new ECvLib.SimpleImageLoadSystem(paths, function (images) {
         }
     }
     context_synthesis.putImageData(imgData, 0, 0);
+    timer.end();
+    timer.printElapsedTime();
     console.log("poisson image editing finished...");
+    timer.printTotalTime();
 });

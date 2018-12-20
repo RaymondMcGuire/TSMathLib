@@ -7,8 +7,9 @@
  * ========================================================================= */
 /// <reference path="./math_utils.ts" />
 /// <reference path="./vector.ts" />
+/// <reference path="./sparse_matrix.ts" />
 /// <reference path="./interface.ts" />
-module EMathLib{
+module EMathLib {
     export class Matrix {
 
         private _elements: Array<number>;
@@ -113,7 +114,7 @@ module EMathLib{
             this.set(this._ones());
         }
 
-        private _values(v:number) {
+        private _values(v: number) {
             let m = new Matrix(this.rows(), this.cols());
             m.forEachIndex((i, j) => {
                 m.setDataByIndexs(i, j, v);
@@ -121,7 +122,7 @@ module EMathLib{
             return m;
         }
 
-        setValues(v:number) {
+        setValues(v: number) {
             this.set(this._values(v));
         }
 
@@ -143,6 +144,17 @@ module EMathLib{
                 m.setDataByIndexs(i, j, this.getDataByIndexs(j, i));
             });
             return m;
+        }
+
+        mat2SpMat() {
+            let data = new Array<[number, number, number]>();
+            this.forEachIndex((i, j) => {
+                let d = this.getDataByIndexs(i, j);
+                if (d != 0) {
+                    data.push([i, j, d]);
+                }
+            });
+            return new SparseMatrix(this.rows(), this.cols(), data);
         }
 
         mat2Vec() {

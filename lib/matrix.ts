@@ -3,9 +3,10 @@
  *  matrix.ts
  *  M*N dimention matrix
  * ========================================================================= */
-import {muldec} from './math_utils'
+import { muldec } from './math_utils'
 import { Vector } from './vector'
-import {MatrixIndex,MatrixData,MatrixSplit} from './interface'
+import { SparseMatrix } from './sparse_matrix'
+import { MatrixIndex, MatrixData, MatrixSplit } from './interface'
 export class Matrix {
 
     private _elements: Array<number>;
@@ -110,7 +111,7 @@ export class Matrix {
         this.set(this._ones());
     }
 
-    private _values(v:number) {
+    private _values(v: number) {
         let m = new Matrix(this.rows(), this.cols());
         m.forEachIndex((i, j) => {
             m.setDataByIndexs(i, j, v);
@@ -118,7 +119,7 @@ export class Matrix {
         return m;
     }
 
-    setValues(v:number) {
+    setValues(v: number) {
         this.set(this._values(v));
     }
 
@@ -140,6 +141,17 @@ export class Matrix {
             m.setDataByIndexs(i, j, this.getDataByIndexs(j, i));
         });
         return m;
+    }
+
+    mat2SpMat() {
+        let data = new Array<[number, number, number]>();
+        this.forEachIndex((i, j) => {
+            let d = this.getDataByIndexs(i, j);
+            if (d != 0) {
+                data.push([i, j, d]);
+            }
+        });
+        return new SparseMatrix(this.rows(), this.cols(), data);
     }
 
     mat2Vec() {

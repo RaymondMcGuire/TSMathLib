@@ -24,7 +24,6 @@ module ECvLib{
                     b.setDataByIndexs(_h,_w,imData.data[index + 2]);
                 }
             }
-
             this._DATA = new Array<EMathLib.Matrix>(this._CHANNEL);
             this._DATA[0] = r;
             this._DATA[1] = g;
@@ -48,9 +47,52 @@ module ECvLib{
         }
 
         setDataByIndexs(j:number,i:number,v:Array<number>){
-            this.R().setDataByIndexs(j,i,v[0]);
-            this.G().setDataByIndexs(j,i,v[1]);
-            this.B().setDataByIndexs(j,i,v[2]);
+            this._DATA[0].setDataByIndexs(j,i,v[0]);
+            this._DATA[1].setDataByIndexs(j,i,v[1]);
+            this._DATA[2].setDataByIndexs(j,i,v[2]);
+        }
+
+        showMaskRegion(mask:MatHxWx3){
+            
+            if(mask.shape()[0] != this.shape()[0] || mask.shape()[1] != this.shape()[1] || mask.shape()[2] != this.shape()[2]){
+                console.log("mask shape is wrong!");
+                return undefined;
+            }
+
+            this.forEachIndex((j,i)=>{
+                let imdata = this.getDataByIndexs(j,i);
+                let maskdata = mask.getDataByIndexs(j,i);
+                let v = new Array<number>(imdata[0]*maskdata[0]/255,imdata[1]*maskdata[1]/255,imdata[2]*maskdata[2]/255);
+                this.setDataByIndexs(j,i,v);
+            });
+        }
+
+        getROIData(top:number,left:number,height:number,width:number){
+            let roi_r = new EMathLib.Matrix(height,width);
+            let roi_g = new EMathLib.Matrix(height,width);
+            let roi_b = new EMathLib.Matrix(height,width);
+            for (var _j = top; _j < top+height; _j++) {
+                for (var _i = left; _i < left+width; _i++) {
+                   var d = this.getDataByIndexs(_j,_i);
+                   roi_r.setDataByIndexs(_j-top,_i-left,d[0]); 
+                   roi_g.setDataByIndexs(_j-top,_i-left,d[1]);
+                   roi_b.setDataByIndexs(_j-top,_i-left,d[2]);
+                }
+            }
+            return [roi_r,roi_g,roi_b];
+        }
+
+        setROIData(top:number,left:number,roi:Array<EMathLib.Matrix>){
+            let height = roi[0].rows();
+            let width = roi[0].cols();
+            
+            for (var _j = top; _j < top+height; _j++) {
+                for (var _i = left; _i < left+width; _i++) {
+                    let d = new Array(roi[0].getDataByIndexs(_j-top,_i-left),roi[1].getDataByIndexs(_j-top,_i-left),roi[2].getDataByIndexs(_j-top,_i-left))
+                    this.setDataByIndexs(_j,_i,d);
+                    
+                }
+            }
         }
 
         shape(){

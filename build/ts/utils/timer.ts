@@ -19,7 +19,7 @@ module EUtilsLib {
         }
 
         printTotalTime() {
-            console.log("Total time:" + Math.round(this._totalTime));
+            console.log("Total time:" + this._totalTime);
         }
 
         printElapsedTime() {

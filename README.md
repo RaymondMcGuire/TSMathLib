@@ -16,7 +16,7 @@ TODO
 
 ### Algorithm
 * Conjugate Gradient Method
-- Solve a linear equation Ax = b 
+** Solve a linear equation Ax = b 
 
 ### Application
 * Poisson Image Editing(SIGGRAPH 2003)

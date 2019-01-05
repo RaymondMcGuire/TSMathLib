@@ -19,7 +19,7 @@ TODO
   - Solve a linear equation Ax = b 
 
 ### Application
-* ![Poisson Image Editing(SIGGRAPH 2003)](https://raymondmcguire.github.io/EcognitaMathLib/build/ "Poisson Image Editing")
+* [Poisson Image Editing(SIGGRAPH 2003)](https://raymondmcguire.github.io/EcognitaMathLib/build/ "Poisson Image Editing")
 
 
 ## Reference

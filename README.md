@@ -1,6 +1,5 @@
 # EcognitaMathLib
 A math library developed by Typescript.
-It can be used to implement some "Compucter Graphics", "Image Processing" algorithm etc. 
 
 ## Getting Started
 TODO
@@ -8,7 +7,7 @@ TODO
 ## Method
 ### Data Type
 * N-dimensions Vector
-* M*N Matrix
+* M * N Matrix
 * Sparse Matrix
 
 ### Data Structure

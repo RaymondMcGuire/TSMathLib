@@ -6,26 +6,119 @@
     <meta name="description" content="RayEngine">
     <meta name="author" content="RaymondMcGuire">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title></title>
+    <link rel="shortcut icon" href="./image/encognita.ico">
 
+    <title>Poission Image Editing</title>
+
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/image-picker.css" rel="stylesheet">
+    <link href="./css/main.css" rel="stylesheet">
 </head>
 
 <body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <center>
+                    <h1 class="jumbotron-heading">Poisson Image Editing Example</h1>
+                </center>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <center>
+                    <div class="card" id="card_source">
+                        <div class="card-body">
+                            <h5 class="card-title">Source Image</h5>
+                            <p class="card-text">The picture which you can blend with other picture. Drag your mouse to drag a mask region.</p>
+                        </div>
+                        <canvas id="cvs_source"></canvas>
+                    </div>
+                </center>
+            </div>
+
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <center>
+                    <div class="card" id="card_source_mask">
+
+                        <div class="card-body">
+                            <h5 class="card-title">Source Image Mask</h5>
+                            <p class="card-text">Source image's mask.</p>
+                        </div>
+                        <canvas id="cvs_source_mask"></canvas>
+                    </div>
+                </center>
+            </div>
+
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                <center>
+                    <div class="card" id="card_target">
+                        <div class="card-body">
+                            <h5 class="card-title">Target Image</h5>
+                            <p class="card-text">The picture which will be blended.</p>
+                        </div>
+                        <canvas id="cvs_target"></canvas>
+                    </div>
+                </center>
+            </div>
+
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                <center>
+                    <div class="card" id="card_target_mask">
+                        <div class="card-body">
+                            <h5 class="card-title">Target Image Mask</h5>
+                            <p class="card-text">Target image's mask. You can select a region to edit the mask.</p>
+                        </div>
+                        <canvas id="cvs_target_mask"></canvas>
+                    </div>
+                </center>
+            </div>
 
 
-    <canvas id="cvs_target"></canvas>
-    <canvas id="cvs_target_mask"></canvas>
 
 
-    <canvas id="cvs_source"></canvas>
-    <canvas id="cvs_source_mask"></canvas>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                <center>
+                    <div class="card" id="card_preview">
 
-    <canvas id="cvs_preview"></canvas>
-    <canvas id="cvs_synthesis"></canvas>
+                        <div class="card-body">
+                            <h5 class="card-title">Preview Mask Image</h5>
+                            <p class="card-text">Preview the target image's mask.</p>
+                        </div>
+                        <canvas id="cvs_preview"></canvas>
+                    </div>
+                </center>
+            </div>
 
-    <button id="btn_PIE">Execute</button>
+
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <center>
+                    <div class="card" id="card_synthesis">
+
+                        <div class="card-body">
+                            <h5 class="card-title">Synthesis Image</h5>
+                            <p class="card-text">Blend parts of the source image to target image.</p>
+                            <button id="btn_PIE" class="btn btn-primary">Go!</a>
+                        </div>
+                        <canvas id="cvs_synthesis"></canvas>
+                    </div>
+                </center>
+            </div>
+
+        </div>
 
 
+    </div>
+
+    <!-- extra library -->
+    <script src="./scripts/extlib/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="./scripts/extlib/image-picker.min.js" type="text/javascript"></script>
+
+    <script src="./scripts/extlib/popper.min.js" type="text/javascript"></script>
+    <script src="./scripts/extlib/bootstrap.min.js" type="text/javascript"></script>
+
+    <!-- poission image editing  -->
     <script src="./scripts/main.js" type="text/javascript"></script>
 
 </body>

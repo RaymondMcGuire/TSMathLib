@@ -15,6 +15,13 @@ var cvs_source_mask = <HTMLCanvasElement>document.getElementById("cvs_source_mas
 var cvs_synthesis = <HTMLCanvasElement>document.getElementById("cvs_synthesis");
 var cvs_preview = <HTMLCanvasElement>document.getElementById("cvs_preview");
 
+var card_target = <HTMLElement>document.getElementById("card_target");
+var card_source = <HTMLCanvasElement>document.getElementById("card_source");
+var card_target_mask = <HTMLCanvasElement>document.getElementById("card_target_mask");
+var card_source_mask = <HTMLCanvasElement>document.getElementById("card_source_mask");
+var card_synthesis = <HTMLCanvasElement>document.getElementById("card_synthesis");
+var card_preview = <HTMLCanvasElement>document.getElementById("card_preview");
+
 var btn_PIE = <HTMLButtonElement>document.getElementById("btn_PIE");
 
 var paths = new EDsLib.HashSet<string>();
@@ -38,13 +45,14 @@ var ImagesLoadSys = new ECvLib.SimpleImageLoadSystem(paths, (images: EDsLib.Hash
 
     cvs_target.height = mona_target.height;
     cvs_target.width = mona_target.width;
+    card_target.style.width = mona_target.width;
 
     var height = cvs_target.height;
     var width = cvs_target.width;
 
     cvs_source.height = cat_source.height;
     cvs_source.width = cat_source.width;
-
+    card_source.style.width = cat_source.width;
 
     var context_target = cvs_target.getContext('2d');
     context_target.drawImage(mona_target, 0, 0);
@@ -53,12 +61,16 @@ var ImagesLoadSys = new ECvLib.SimpleImageLoadSystem(paths, (images: EDsLib.Hash
     //preview canvas
     cvs_preview.height = mona_target.height;
     cvs_preview.width = mona_target.width;
+    card_preview.style.width = mona_target.width;
+
     var context_preview = cvs_preview.getContext('2d');
     context_preview.drawImage(mona_target, 0, 0);
 
     //target mask canvas
     cvs_target_mask.height = height;
     cvs_target_mask.width = width;
+    card_target_mask.style.width = mona_target.width;
+
     var context_target_mask = cvs_target_mask.getContext('2d');
     context_target_mask.clearRect(0, 0, width, height);
     context_target_mask.fillStyle = "black";
@@ -67,6 +79,8 @@ var ImagesLoadSys = new ECvLib.SimpleImageLoadSystem(paths, (images: EDsLib.Hash
     //source mask canvas
     cvs_source_mask.height = height;
     cvs_source_mask.width = width;
+    card_source_mask.style.width = cat_source.width;
+
     var context_source_mask = cvs_source_mask.getContext('2d');
     context_source_mask.clearRect(0, 0, width, height);
     context_source_mask.fillStyle = "black";
@@ -75,6 +89,8 @@ var ImagesLoadSys = new ECvLib.SimpleImageLoadSystem(paths, (images: EDsLib.Hash
     //result canvas
     cvs_synthesis.height = height;
     cvs_synthesis.width = width;
+    card_synthesis.style.width = mona_target.width;
+
     var context_synthesis = cvs_synthesis.getContext('2d');
     context_synthesis.clearRect(0, 0, width, height);
     context_synthesis.fillStyle = "black";

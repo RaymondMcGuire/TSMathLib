@@ -806,7 +806,9 @@ var EDsLib;
         };
         HashSet.prototype.forEach = function (f) {
             for (var k in this.items) {
-                f(k, this.items[k]);
+                if (this.items.hasOwnProperty(k)) {
+                    f(k, this.items[k]);
+                }
             }
         };
         return HashSet;
@@ -1075,7 +1077,7 @@ var ImagesLoadSys = new ECvLib.SimpleImageLoadSystem(paths, function (images) {
     var endX = 0;
     var endY = 0;
     var select = true;
-    var source_mask_roi_image = undefined;
+    var source_mask_roi_image;
     var temp_coord = [];
     var drag = false;
     var down = false;

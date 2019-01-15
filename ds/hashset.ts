@@ -1,5 +1,5 @@
 
-interface itf_KeyVal{(key:string, val:any) :void};
+interface itf_KeyVal { (key: string, val: any): void };
 
 export class HashSet<T> {
     private items: { [key: string]: T; };
@@ -28,9 +28,11 @@ export class HashSet<T> {
         return Object.keys(this.items).length;
     }
 
-    forEach(f:itf_KeyVal) {
+    forEach(f: itf_KeyVal) {
         for (let k in this.items) {
-            f(k, this.items[k]);
+            if (this.items.hasOwnProperty(k)) {
+                f(k, this.items[k]);
+            }
         }
     }
 }

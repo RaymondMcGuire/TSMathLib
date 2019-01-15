@@ -144,7 +144,7 @@ var ImagesLoadSys = new ECvLib.SimpleImageLoadSystem(paths, (images: EDsLib.Hash
     var endX = 0;
     var endY = 0;
     var select = true;
-    var source_mask_roi_image = undefined;
+    var source_mask_roi_image;
     var temp_coord = [];
     var drag = false;
     var down = false;

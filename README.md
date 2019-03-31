@@ -14,10 +14,11 @@ TODO
 * HashSet
 
 ### Algorithm
-- Conjugate Gradient Method
-  - Solve a linear equation Ax = b 
-- Gaussian Elimination
-  - Solve a linear system equations
+- Solve a linear equation Ax = b
+  - Conjugate Gradient Method
+- Solve a linear system equations
+  - Gaussian Elimination
+  - Cramer's Rule
 
 ### Application
 - [Poisson Image Editing(SIGGRAPH 2003)](https://raymondmcguire.github.io/EcognitaMathLib/build/ "Poisson Image Editing")

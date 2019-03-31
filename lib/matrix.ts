@@ -52,6 +52,20 @@ export class Matrix {
         return this.data()[index];
     }
 
+    getDeterminant(row:number,col:number){
+        let d = new Matrix(this.rows()-1, this.cols()-1);
+        let cnt = 0;
+        this.forEachIndex((i,j)=>{
+            if(i != row && j != col){
+                let _i = Math.floor(cnt/(this.cols()-1));
+                let _j = cnt % (this.cols()-1);
+                d.setDataByIndexs(_i,_j,this.getDataByIndexs(i,j));
+                cnt++;
+            }
+        });
+        return d;
+    }
+
     setDataByIndexs(row: number, col: number, d: number) {
         let index = row * this._N + col;
         this.data()[index] = d;

@@ -51,6 +51,14 @@ describe("Matrix", () => {
         expect(spm.data()).to.eql(new Array<[number, number, number]>([1, 1, 1], [2, 2, 3]));
     });
 
+    it("get matrix determinant by (i,j)", () => {
+        let m = new Matrix(3, 5, new Array(0, 0, 0, 0, 1, 0, 0, 0, 3, 3, 7, 4, 3, 6, 2));
+        //m.printMatrix();
+        let d = m.getDeterminant(1,3);
+        //d.printMatrix();
+        expect(d.data()).to.eql(new Array(0, 0, 0, 1, 7, 4, 3, 2));
+    });
+
     describe("Sparse Matrix", () => {
         it("init sparse matrix", () => {
             let m = new SparseMatrix(4, 7, new Array<[number, number, number]>([1, 3, 54], [0, 1, 8], [0, 3, 6], [3, 4, -12], [1, 2, 34], [0, 6, 2], [1, 6, 2], [2, 0, -7]));

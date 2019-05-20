@@ -15,3 +15,7 @@ export function absMin(x: number, y: number) {
 export function muldec(x: number, y: number) {
   return ((x * 10) * (y * 10)) / 100
 }
+
+export function divdec(x: number, y: number) {
+  return ((x * 10) / (y * 10)) / 100
+}

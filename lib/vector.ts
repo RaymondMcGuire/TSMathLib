@@ -5,7 +5,7 @@
  *  T:type,default setting is number
  *  D:dimension
  * ========================================================================= */
-import { absMax, absMin } from './math_utils'
+import { absMax, absMin, muldec } from './math_utils'
 
 export class Vector {
   private _elements: Array<number>;
@@ -294,6 +294,6 @@ export class Vector {
    * @param v 
    */
   static proj(u: Vector, v: Vector) {
-    return new Vector(u.size(), u.data()).mul(u.dot(v) / v.dot(v))
+    return u.mul(v.dot(u) / u.dot(u))
   }
 }

@@ -1,0 +1,24 @@
+{
+    "rulesDirectory": [
+        "tslint-plugin-prettier"
+    ],
+    "extends": [
+        "tslint-config-standard",
+        "tslint-config-prettier"
+    ],
+    "linterOptions": {
+        "exclude": [
+            "build/**",
+            "unit_test/**"
+        ]
+    },
+    "rules": {
+        "prettier": [
+            true,
+            {
+                "singleQuote": true,
+                "semi": false
+            }
+        ]
+    }
+}

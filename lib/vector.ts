@@ -5,11 +5,11 @@
  *  T:type,default setting is number
  *  D:dimension
  * ========================================================================= */
-import { absMax, absMin, muldec } from './math_utils'
+import { absMax, absMin } from './math_utils'
 
 export class Vector {
-  private _elements: Array<number>;
-  private _dimension: number;
+  private _elements: Array<number>
+  private _dimension: number
 
   // constructs vector with parameters or zero
   constructor(dimension: number, params?: Array<number>) {
@@ -33,27 +33,32 @@ export class Vector {
     if (params !== undefined) {
       if (params.size() !== this.size()) {
         console.log('dimension is not correct!')
-        return -1
+        return false
       }
-      for (var _i = 0; _i < params.size(); _i++) {
+      for (let _i = 0; _i < params.size(); _i++) {
         this._elements[_i] = params.data()[_i]
       }
+
+      return true
     }
+    return false
   }
 
   setZero() {
-    for (var _i = 0; _i < this._dimension; _i++) {
+    for (let _i = 0; _i < this._dimension; _i++) {
       this._elements[_i] = 0
     }
   }
 
   setOne() {
-    for (var _i = 0; _i < this._dimension; _i++) {
+    for (let _i = 0; _i < this._dimension; _i++) {
       this._elements[_i] = 1
     }
   }
 
-  data() { return this._elements }
+  data() {
+    return this._elements
+  }
 
   at(idx: number) {
     if (idx < 0 || idx >= this.size()) {
@@ -74,34 +79,44 @@ export class Vector {
     }
 
     let ret = 0
-    for (var _i = 0; _i < this.size(); _i++) {
+    for (let _i = 0; _i < this.size(); _i++) {
       ret += this._elements[_i] * others.data()[_i]
     }
     return ret
   }
 
-  lengthSquared() { return this.dot(this) }
+  lengthSquared() {
+    return this.dot(this)
+  }
 
-  length() { return Math.sqrt(this.lengthSquared()) }
+  length() {
+    return Math.sqrt(this.lengthSquared())
+  }
 
-  normalize() { this.idiv(this.length()) }
+  normalize() {
+    this.idiv(this.length())
+  }
 
   sum() {
     let ret = 0
-    for (var _i = 0; _i < this._dimension; _i++) {
+    for (let _i = 0; _i < this._dimension; _i++) {
       ret += this._elements[_i]
     }
     return ret
   }
 
-  size() { return this._dimension }
+  size() {
+    return this._dimension
+  }
 
-  avg() { return this.sum() / this.size() }
+  avg() {
+    return this.sum() / this.size()
+  }
 
   min() {
     let minVal = this._elements[0]
 
-    for (var _i = 1; _i < this._dimension; _i++) {
+    for (let _i = 1; _i < this._dimension; _i++) {
       minVal = Math.min(minVal, this._elements[_i])
     }
     return minVal
@@ -109,7 +124,7 @@ export class Vector {
 
   max() {
     let maxVal = this._elements[0]
-    for (var _i = 1; _i < this._dimension; _i++) {
+    for (let _i = 1; _i < this._dimension; _i++) {
       maxVal = Math.max(maxVal, this._elements[_i])
     }
     return maxVal
@@ -117,7 +132,7 @@ export class Vector {
 
   absmax() {
     let absMaxVal = this._elements[0]
-    for (var _i = 1; _i < this._dimension; _i++) {
+    for (let _i = 1; _i < this._dimension; _i++) {
       absMaxVal = absMax(absMaxVal, this._elements[_i])
     }
     return absMaxVal
@@ -125,7 +140,7 @@ export class Vector {
 
   absmin() {
     let absMinVal = this._elements[0]
-    for (var _i = 1; _i < this._dimension; _i++) {
+    for (let _i = 1; _i < this._dimension; _i++) {
       absMinVal = absMin(absMinVal, this._elements[_i])
     }
     return absMinVal
@@ -138,7 +153,7 @@ export class Vector {
     }
 
     let ret = 0
-    for (var _i = 0; _i < this.size(); _i++) {
+    for (let _i = 0; _i < this.size(); _i++) {
       let diff = this._elements[_i] - others.data()[_i]
       ret += diff * diff
     }
@@ -153,7 +168,7 @@ export class Vector {
   isEqual(others: Vector) {
     if (this.size() !== others.size()) return false
 
-    for (var _i = 0; _i < this.size(); _i++) {
+    for (let _i = 0; _i < this.size(); _i++) {
       if (this.at(_i) !== others.at(_i)) return false
     }
 
@@ -164,7 +179,7 @@ export class Vector {
     if (others === undefined) return false
     if (this.size() !== others.size()) return false
 
-    for (var _i = 0; _i < this.size(); _i++) {
+    for (let _i = 0; _i < this.size(); _i++) {
       if (Math.abs(this.at(_i) - others.at(_i)) > epsilon) return false
     }
 
@@ -173,7 +188,7 @@ export class Vector {
 
   add(params?: any) {
     let _i = 0
-    if (typeof (params) === 'object') {
+    if (typeof params === 'object') {
       let v = params
       if (v.size() !== this.size()) return new Vector(1, [-1])
 
@@ -183,7 +198,7 @@ export class Vector {
       }
 
       return newV
-    } else if (typeof (params) === 'number') {
+    } else if (typeof params === 'number') {
       let s = params
       let newV = new Vector(this.size(), this.data())
       for (_i = 0; _i < newV.size(); _i++) {
@@ -198,7 +213,7 @@ export class Vector {
 
   sub(params?: any) {
     let _i = 0
-    if (typeof (params) === 'object') {
+    if (typeof params === 'object') {
       let v = params
       if (v.size() !== this.size()) return new Vector(1, [-1])
 
@@ -208,7 +223,7 @@ export class Vector {
       }
 
       return newV
-    } else if (typeof (params) === 'number') {
+    } else if (typeof params === 'number') {
       let s = params
       let newV = new Vector(this.size(), this.data())
       for (_i = 0; _i < newV.size(); _i++) {
@@ -223,7 +238,7 @@ export class Vector {
 
   mul(params?: any) {
     let _i = 0
-    if (typeof (params) === 'object') {
+    if (typeof params === 'object') {
       let v = params
       if (v.size() !== this.size()) return new Vector(1, [-1])
 
@@ -233,7 +248,7 @@ export class Vector {
       }
 
       return newV
-    } else if (typeof (params) === 'number') {
+    } else if (typeof params === 'number') {
       let s = params
       let newV = new Vector(this.size(), this.data())
       for (_i = 0; _i < newV.size(); _i++) {
@@ -248,7 +263,7 @@ export class Vector {
 
   div(params?: any) {
     let _i = 0
-    if (typeof (params) === 'object') {
+    if (typeof params === 'object') {
       let v = params
       if (v.size() !== this.size()) return new Vector(1, [-1])
 
@@ -258,7 +273,7 @@ export class Vector {
       }
 
       return newV
-    } else if (typeof (params) === 'number') {
+    } else if (typeof params === 'number') {
       let s = params
       if (s === 0) return new Vector(1, [-1])
       let newV = new Vector(this.size(), this.data())
@@ -272,26 +287,35 @@ export class Vector {
     return new Vector(1, [-1])
   }
 
-  idiv(params?: any) { this.set(this.div(params)) }
+  idiv(params?: any) {
+    this.set(this.div(params))
+  }
 
-  iadd(params?: any) { this.set(this.add(params)) }
+  iadd(params?: any) {
+    this.set(this.add(params))
+  }
 
-  isub(params?: any) { this.set(this.sub(params)) }
+  isub(params?: any) {
+    this.set(this.sub(params))
+  }
 
-  imul(params?: any) { this.set(this.mul(params)) }
+  imul(params?: any) {
+    this.set(this.mul(params))
+  }
 
   setAt(idx: number, val: number) {
     if (idx < 0 || idx >= this.size()) {
-      return -1
+      return undefined
     }
 
     this._elements[idx] = val
+    return true
   }
 
   /**
-   * proj_u(v) = <u,v>/<v,v> u 
-   * @param u 
-   * @param v 
+   * proj_u(v) = <u,v>/<v,v> u
+   * @param u
+   * @param v
    */
   static proj(u: Vector, v: Vector) {
     return u.mul(v.dot(u) / u.dot(u))

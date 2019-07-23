@@ -12,14 +12,16 @@ import { Matrix } from './matrix'
  *  ----------
  *
  * ========================================================================= */
-export function gaussian_elimination_solve(N : Matrix) {
+export function gaussian_elimination_solve(N: Matrix) {
   let result = 0
-  let i; let j; let k = 0
-  var n = N.rows()
+  let i
+  let j
+  let k = 0
+  let n = N.rows()
 
   for (k = 0; k < n - 1; k++) {
-    var p = k
-    var max = Math.abs(N.getDataByIndexs(k, k))
+    let p = k
+    let max = Math.abs(N.getDataByIndexs(k, k))
 
     for (i = k + 1; i < n; i++) {
       if (Math.abs(N.getDataByIndexs(i, k)) > max) {
@@ -29,7 +31,7 @@ export function gaussian_elimination_solve(N : Matrix) {
     }
     if (p !== k) {
       for (i = k; i <= n; i++) {
-        var tmp = N.getDataByIndexs(k, i)
+        let tmp = N.getDataByIndexs(k, i)
         N.setDataByIndexs(k, i, N.getDataByIndexs(p, i))
         N.setDataByIndexs(p, i, tmp)
       }
@@ -37,13 +39,16 @@ export function gaussian_elimination_solve(N : Matrix) {
 
     for (i = k + 1; i < n; i++) {
       for (j = k + 1; j <= n; j++) {
-        result = N.getDataByIndexs(i, j) - N.getDataByIndexs(k, j) * N.getDataByIndexs(i, k) / N.getDataByIndexs(k, k)
+        result =
+          N.getDataByIndexs(i, j) -
+          (N.getDataByIndexs(k, j) * N.getDataByIndexs(i, k)) /
+            N.getDataByIndexs(k, k)
         N.setDataByIndexs(i, j, result)
       }
     }
   }
 
-  var ans = []
+  let ans = []
 
   for (k = n - 1; k >= 0; k--) {
     for (j = k + 1; j < n; j++) {

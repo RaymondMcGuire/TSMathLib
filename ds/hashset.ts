@@ -1,38 +1,39 @@
-
-interface itf_KeyVal { (key: string, val: any): void };
+interface IntfKeyVal {
+  (key: string, val: any): void
+}
 
 export class HashSet<T> {
-    private items: { [key: string]: T; };
+  private items: { [key: string]: T }
 
-    constructor() {
-        this.items = {};
-    }
+  constructor() {
+    this.items = {}
+  }
 
-    set(key: string, value: T): void {
-        this.items[key] = value;
-    }
+  set(key: string, value: T): void {
+    this.items[key] = value
+  }
 
-    delete(key: string): boolean {
-        return delete this.items[key];
-    }
+  delete(key: string): boolean {
+    return delete this.items[key]
+  }
 
-    has(key: string): boolean {
-        return key in this.items;
-    }
+  has(key: string): boolean {
+    return key in this.items
+  }
 
-    get(key: string): T {
-        return this.items[key];
-    }
+  get(key: string): T {
+    return this.items[key]
+  }
 
-    len(): number {
-        return Object.keys(this.items).length;
-    }
+  len(): number {
+    return Object.keys(this.items).length
+  }
 
-    forEach(f: itf_KeyVal) {
-        for (let k in this.items) {
-            if (this.items.hasOwnProperty(k)) {
-                f(k, this.items[k]);
-            }
-        }
+  forEach(f: IntfKeyVal) {
+    for (let k in this.items) {
+      if (this.items.hasOwnProperty(k)) {
+        f(k, this.items[k])
+      }
     }
+  }
 }

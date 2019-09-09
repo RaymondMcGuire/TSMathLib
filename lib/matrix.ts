@@ -244,14 +244,13 @@ export class Matrix {
   }
 
   same(m: Matrix) {
-
     let bSame = true
     // check matrix shape
-    if (this.cols() !== m.cols() || this.rows() !== m.rows()) bSame= false
+    if (this.cols() !== m.cols() || this.rows() !== m.rows()) bSame = false
 
     // check elements
     this.forEachIndex((i, j) => {
-      if (this.getDataByIndexs(i, j) !== m.getDataByIndexs(i, j)) bSame= false
+      if (this.getDataByIndexs(i, j) !== m.getDataByIndexs(i, j)) bSame = false
     })
 
     return bSame

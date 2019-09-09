@@ -8,6 +8,8 @@
  *  jk = -kj = i, ki = -ik = j, ij = -ji = k
  *
  * ========================================================================= */
+import { Matrix4x4 } from '../webgl/matrix4x4'
+
 export class Quaternion {
   x: number
   y: number
@@ -32,7 +34,7 @@ export class Quaternion {
    *
    *    = (q_v x r_w + r_w*q_v + q_w*r_v, q_w*r_w - q_v・r_v)
    */
-  mul(r: Quaternion) {
+  mul(r: Quaternion): Quaternion {
     let q = this
     let _x = q.y * r.z - q.z * r.y + r.w * q.x + q.w * r.x
     let _y = q.z * r.x - q.x * r.z + r.w * q.y + q.w * r.y
@@ -41,16 +43,16 @@ export class Quaternion {
     return new Quaternion(_x, _y, _z, _w)
   }
 
-  add(r: Quaternion) {
+  add(r: Quaternion): Quaternion {
     let q = this
     return new Quaternion(q.x + r.x, q.y + r.y, q.z + r.z, q.w + r.w)
   }
 
-  inv() {
+  inv(): Quaternion {
     return new Quaternion(-this.x, -this.y, -this.z, this.w)
   }
 
-  norm() {
+  norm(): Quaternion {
     let _x = 0
     let _y = 0
     let _z = 0
@@ -66,5 +68,125 @@ export class Quaternion {
       _w = this.w * l
     }
     return new Quaternion(_x, _y, _z, _w)
+  }
+
+  identity(): Quaternion {
+    return new Quaternion(0, 0, 0, 1)
+  }
+
+  rotate(angle: number, axis: Array<number>): Quaternion {
+    let sq = Math.sqrt(
+      axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]
+    )
+    if (!sq) {
+      console.log('error: quaternion need a axis value')
+      return new Quaternion(0, 0, 0, 0)
+    }
+    let a = axis[0]
+    let b = axis[1]
+    let c = axis[2]
+    if (sq !== 1) {
+      sq = 1 / sq
+      a *= sq
+      b *= sq
+      c *= sq
+    }
+    let s = Math.sin(angle * 0.5)
+
+    let _x = a * s
+    let _y = b * s
+    let _z = c * s
+    let _w = Math.cos(angle * 0.5)
+    return new Quaternion(_x, _y, _z, _w)
+  }
+
+  // P' = qPq^(-1)
+  ToV3(pv3: Array<number>, q: Quaternion): Array<number> {
+    let invq = q.inv()
+
+    let inp = new Quaternion(pv3[0], pv3[1], pv3[2], 0)
+
+    let pinvq = invq.mul(inp)
+    let qpinvq = pinvq.mul(q)
+
+    return new Array(qpinvq.x, qpinvq.y, qpinvq.z)
+  }
+
+  ToMat4x4(): Matrix4x4 {
+    let x = this.x
+    let y = this.y
+    let z = this.z
+    let w = this.w
+
+    let x2 = x + x
+    let y2 = y + y
+    let z2 = z + z
+    let xx = x * x2
+    let xy = x * y2
+    let xz = x * z2
+    let yy = y * y2
+    let yz = y * z2
+    let zz = z * z2
+    let wx = w * x2
+    let wy = w * y2
+    let wz = w * z2
+
+    let v16 = new Array<number>(16)
+    v16[0] = 1 - (yy + zz)
+    v16[1] = xy - wz
+    v16[2] = xz + wy
+    v16[3] = 0
+    v16[4] = xy + wz
+    v16[5] = 1 - (xx + zz)
+    v16[6] = yz - wx
+    v16[7] = 0
+    v16[8] = xz - wy
+    v16[9] = yz + wx
+    v16[10] = 1 - (xx + yy)
+    v16[11] = 0
+    v16[12] = 0
+    v16[13] = 0
+    v16[14] = 0
+    v16[15] = 1
+
+    let mat = new Matrix4x4(v16)
+    return mat
+  }
+
+  slerp(qtn1: Quaternion, qtn2: Quaternion, time: number): Quaternion {
+    let outq = new Quaternion(0, 0, 0, 0)
+
+    if (time < 0 || time > 1) {
+      console.log("error: quaternion, parameter time's setting is wrong!")
+      return outq
+    }
+
+    let ht =
+      qtn1.x * qtn2.x + qtn1.y * qtn2.y + qtn1.z * qtn2.z + qtn1.w * qtn2.w
+    let hs = 1.0 - ht * ht
+    if (hs <= 0.0) {
+      outq.x = qtn1.x
+      outq.y = qtn1.y
+      outq.z = qtn1.z
+      outq.w = qtn1.w
+    } else {
+      hs = Math.sqrt(hs)
+      if (Math.abs(hs) < 0.0001) {
+        outq.x = qtn1.x * 0.5 + qtn2.x * 0.5
+        outq.y = qtn1.y * 0.5 + qtn2.y * 0.5
+        outq.z = qtn1.z * 0.5 + qtn2.z * 0.5
+        outq.w = qtn1.w * 0.5 + qtn2.w * 0.5
+      } else {
+        let ph = Math.acos(ht)
+        let pt = ph * time
+        let t0 = Math.sin(ph - pt) / hs
+        let t1 = Math.sin(pt) / hs
+        outq.x = qtn1.x * t0 + qtn2.x * t1
+        outq.y = qtn1.y * t0 + qtn2.y * t1
+        outq.z = qtn1.z * t0 + qtn2.z * t1
+        outq.w = qtn1.w * t0 + qtn2.w * t1
+      }
+    }
+    return outq
   }
 }

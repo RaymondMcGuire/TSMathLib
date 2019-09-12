@@ -8,8 +8,8 @@
 import { absMax, absMin } from './math_utils'
 
 export class Vector {
-  private _elements: Array<number>
-  private _dimension: number
+  _elements: Array<number>
+  _dimension: number
 
   // constructs vector with parameters or zero
   constructor(dimension: number, params?: Array<number>) {

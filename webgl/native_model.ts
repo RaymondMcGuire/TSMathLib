@@ -115,9 +115,9 @@ export class TorusModel {
     hcrs: number,
     vr: number,
     hr: number,
-    color: Array<number>,
     bnormal: boolean,
-    btexture: boolean = false
+    btexture: boolean,
+    color?: Array<number>
   ) {
     this.verCrossSectionSmooth = vcrs
     this.horCrossSectionSmooth = hcrs

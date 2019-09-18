@@ -9,17 +9,31 @@
  *
  * ========================================================================= */
 import { Matrix4x4 } from '../webgl/matrix4x4'
+import { Vector3 } from './vector3'
 
 export class Quaternion {
   x: number
   y: number
   z: number
   w: number
-  constructor(_x: number, _y: number, _z: number, _w: number) {
-    this.x = _x
-    this.y = _y
-    this.z = _z
-    this.w = _w
+  constructor(_x?: number, _y?: number, _z?: number, _w?: number) {
+    if (
+      _x !== undefined &&
+      _y !== undefined &&
+      _z !== undefined &&
+      _w !== undefined
+    ) {
+      this.x = _x
+      this.y = _y
+      this.z = _z
+      this.w = _w
+    } else {
+      let q = this.identity()
+      this.x = q.x
+      this.y = q.y
+      this.z = q.z
+      this.w = q.w
+    }
   }
 
   /**
@@ -101,15 +115,15 @@ export class Quaternion {
   }
 
   // P' = qPq^(-1)
-  ToV3(pv3: Array<number>, q: Quaternion): Array<number> {
+  ToV3(pv3: Vector3, q: Quaternion): Vector3 {
     let invq = q.inv()
 
-    let inp = new Quaternion(pv3[0], pv3[1], pv3[2], 0)
+    let inp = new Quaternion(pv3.x(), pv3.y(), pv3.z(), 0)
 
     let pinvq = invq.mul(inp)
     let qpinvq = pinvq.mul(q)
 
-    return new Array(qpinvq.x, qpinvq.y, qpinvq.z)
+    return new Vector3(qpinvq.x, qpinvq.y, qpinvq.z)
   }
 
   ToMat4x4(): Matrix4x4 {

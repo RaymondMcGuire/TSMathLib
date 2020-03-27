@@ -8,8 +8,8 @@
     ],
     "linterOptions": {
         "exclude": [
-            "build/**",
-            "unit_test/**"
+            "**/build/**",
+            "**/unit_test/**"
         ]
     },
     "rules": {

@@ -258,7 +258,7 @@ export class Matrix {
 
   printMatrix() {
     let printStr = '[\n'
-    this.forEachRow(r => {
+    this.forEachRow((r) => {
       printStr += r.join(',')
       printStr += '\n'
     })

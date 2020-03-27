@@ -6,28 +6,27 @@
     "author": "wang xu <raymondmg@foxmail.com>",
     "license": "MIT",
     "dependencies": {
-        "typescript": "^3.5.3",
-        "webpack": "^4.36.1",
-        "webpack-cli": "^3.3.6",
-        "webpack-dev-server": "^3.7.2"
+        "typescript": "^3.8.3",
+        "webpack": "^4.42.1",
+        "webpack-cli": "^3.3.11",
+        "webpack-dev-server": "^3.10.3"
     },
     "scripts": {
         "build": "webpack",
         "watch": "webpack-dev-server",
-        "check": "yarn run tsc --noEmit && yarn run tslint",
         "tslint": "tslint --project tsconfig.json",
         "tslint-fix": "tslint --fix --project tsconfig.json"
     },
     "devDependencies": {
-        "@babel/core": "^7.1.2",
-        "@babel/preset-env": "^7.1.0",
-        "babel-loader": "^8.0.4",
-        "prettier": "^1.14.3",
-        "ts-loader": "^5.2.1",
+        "@babel/core": "^7.9.0",
+        "@babel/preset-env": "^7.9.0",
+        "babel-loader": "^8.1.0",
+        "prettier": "^2.0.2",
+        "ts-loader": "^6.2.2",
         "tslint": "^5.11.0",
-        "tslint-config-prettier": "^1.15.0",
-        "tslint-config-standard": "^8.0.1",
-        "tslint-plugin-prettier": "^2.0.0",
-        "webpack-cli": "^3.3.6"
+        "tslint-config-prettier": "^1.18.0",
+        "tslint-config-standard": "^9.0.0",
+        "tslint-plugin-prettier": "^2.3.0",
+        "webpack-cli": "^3.3.11"
     }
 }

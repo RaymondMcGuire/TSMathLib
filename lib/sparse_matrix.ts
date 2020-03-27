@@ -173,7 +173,7 @@ export class SparseMatrix {
     let rowColMapping = new Array<Array<number>>(this.rows())
     for (let _i = 0; _i < this.rows(); _i++) rowColMapping[_i] = []
 
-    this.forEachData(d => {
+    this.forEachData((d) => {
       let r = d[0]
       let c = d[1]
       rowColMapping[r].push(c)
@@ -212,7 +212,7 @@ export class SparseMatrix {
 
   spMat2Mat() {
     let m = new Matrix(this.rows(), this.cols())
-    this.forEachData(d => {
+    this.forEachData((d) => {
       m.setDataByIndexs(d[0], d[1], d[2])
     })
     return m
@@ -230,7 +230,7 @@ export class SparseMatrix {
       data[_i] = 0
     }
 
-    this.forEachData(d => {
+    this.forEachData((d) => {
       let idx = d[this.rows() === 1 ? 1 : 0]
       data[idx] = d[2]
     })
@@ -254,7 +254,7 @@ export class SparseMatrix {
 
   printSparseMatrix() {
     let printStr = ''
-    this.forEachData(r => {
+    this.forEachData((r) => {
       printStr += '[' + r + ']'
     })
     printStr += ''

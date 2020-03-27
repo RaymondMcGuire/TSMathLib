@@ -2,7 +2,7 @@
 A math library developed by Typescript.
 
 ## Getting Started
-TODO
+yarn install
 
 ## Method
 ### Data Type
@@ -30,6 +30,6 @@ TODO
 - check code: yarn run check
 - fix tslint: yarn run tslint-fix
 - delete node_modules: rimraf node_modules 
-
+- npm update check: ncu -> ncu -u -> npm install
 ## Reference
 * Pérez, Patrick, Michel Gangnet, and Andrew Blake. "Poisson image editing." ACM Transactions on graphics (TOG) 22.3 (2003): 313-318.

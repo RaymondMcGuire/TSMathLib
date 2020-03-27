@@ -1,4 +1,4 @@
-# EcognitaMathLib
+# TSMathLib
 A math library developed by Typescript.
 
 ## Getting Started

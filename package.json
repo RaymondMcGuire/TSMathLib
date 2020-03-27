@@ -1,8 +1,8 @@
 {
-    "name": "ecognitamathlib",
+    "name": "tsmathlib",
     "version": "1.0.0",
-    "main": "egmath.js",
-    "repository": "https://github.com/RaymondMcGuire/EcognitaMathLib.git",
+    "main": "tsmath.js",
+    "repository": "https://github.com/RaymondMcGuire/TSMathLib.git",
     "author": "wang xu <raymondmg@foxmail.com>",
     "license": "MIT",
     "dependencies": {

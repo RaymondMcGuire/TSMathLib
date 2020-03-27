@@ -4,7 +4,7 @@
  *  4*4 size matrix
  * ========================================================================= */
 
-import { Vector } from '../lib/vector'
+import { Vector } from '../src/math/vector'
 
 export class Matrix4x4 extends Vector {
   constructor(params?: Array<number>) {

@@ -8,7 +8,7 @@
  *  jk = -kj = i, ki = -ik = j, ij = -ji = k
  *
  * ========================================================================= */
-import { Matrix4x4 } from '../webgl/matrix4x4'
+import { Matrix4x4 } from '../../webgl/matrix4x4'
 import { Vector3 } from './vector3'
 
 export class Quaternion {

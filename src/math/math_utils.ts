@@ -1,8 +1,10 @@
-/* =========================================================================
- *
- *  math_utils.ts
- *  simple math functions
- * ========================================================================= */
+/*
+ * @Author: Xu.Wang
+ * @Date: 2020-03-28 02:04:37
+ * @Last Modified by: Xu.Wang
+ * @Last Modified time: 2020-03-28 02:05:28
+ * @Description: simple math functions
+ */
 
 export function absMax(x: number, y: number) {
   return x * x > y * y ? x : y

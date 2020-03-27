@@ -1,6 +1,12 @@
-import { Matrix } from './matrix'
-import { SparseMatrix } from './sparse_matrix'
-import { Vector } from './vector'
+/*
+ * @Author: Xu.Wang
+ * @Date: 2020-03-28 01:45:02
+ * @Last Modified by:   Xu.Wang
+ * @Last Modified time: 2020-03-28 01:45:02
+ */
+import { Matrix } from '../math/matrix'
+import { SparseMatrix } from '../math/sparse_matrix'
+import { Vector } from '../math/vector'
 /* =========================================================================
  *
  *  conjugate_grad.ts

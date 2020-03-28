@@ -81,10 +81,34 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/examples/tsmath.ts");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./examples/tsmath.ts");
 /******/ })
 /************************************************************************/
 /******/ ({
+
+/***/ "./examples/sph_kernel_demo.ts":
+/*!*************************************!*\
+  !*** ./examples/sph_kernel_demo.ts ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n/*\r\n * @Author: Xu.Wang\r\n * @Date: 2020-03-29 00:42:39\r\n * @Last Modified by: Xu.Wang\r\n * @Last Modified time: 2020-03-29 00:52:43\r\n */\n\nvar sph_kernel_1 = __webpack_require__(/*! ../src/sph/sph_kernel */ \"./src/sph/sph_kernel.ts\");\n\nvar chart_js_1 = __webpack_require__(/*! chart.js */ \"./node_modules/chart.js/dist/Chart.js\");\n\nfunction SPH_Kernel_Demo() {\n  var vMin = -1;\n  var vMax = 1;\n  var interval = 1000;\n  var vStep = (vMax - vMin) / interval;\n  var smoothRadius = 1;\n  var poly6 = new sph_kernel_1.SphKernelPoly6(smoothRadius);\n  var spiky = new sph_kernel_1.SphKernelSpiky(smoothRadius);\n  var chartDataPoly6 = {\n    datasets: [{\n      label: 'poly6',\n      \"function\": function _function(x) {\n        return poly6.get(x);\n      },\n      data: [],\n      borderColor: 'rgba(75, 192, 192, 1)',\n      fill: false\n    }, {\n      label: 'poly6_firstDerivative',\n      \"function\": function _function(x) {\n        return poly6.getFirstDerivative(x);\n      },\n      data: [],\n      borderColor: 'rgba(192, 75, 192, 1)',\n      fill: false\n    }, {\n      label: 'poly6_secondDerivative',\n      \"function\": function _function(x) {\n        return poly6.getSecondDerivative(x);\n      },\n      data: [],\n      borderColor: 'rgba(192, 192, 75, 1)',\n      fill: false\n    }]\n  };\n  var chartDataSpiky = {\n    datasets: [{\n      label: 'spiky',\n      \"function\": function _function(x) {\n        return spiky.get(x);\n      },\n      data: [],\n      borderColor: 'rgba(75, 192, 192, 1)',\n      fill: false\n    }, {\n      label: 'spiky_firstDerivative',\n      \"function\": function _function(x) {\n        return spiky.getFirstDerivative(x);\n      },\n      data: [],\n      borderColor: 'rgba(192, 75, 192, 1)',\n      fill: false\n    }, {\n      label: 'spiky_secondDerivative',\n      \"function\": function _function(x) {\n        return spiky.getSecondDerivative(x);\n      },\n      data: [],\n      borderColor: 'rgba(192, 192, 75, 1)',\n      fill: false\n    }]\n  };\n  chart_js_1.Chart.pluginService.register({\n    beforeInit: function beforeInit(chart) {\n      var data = chart.config.data;\n\n      for (var i = 0; i < data.datasets.length; i++) {\n        for (var _x = vMin; _x <= vMax; _x += vStep) {\n          var fct = data.datasets[i][\"function\"];\n\n          var _y = fct(_x);\n\n          data.datasets[i].data.push({\n            x: _x,\n            y: _y\n          });\n        }\n      }\n    }\n  });\n  var divPoly6 = document.getElementById('chart_poly6');\n  var ChartPoly6 = new chart_js_1.Chart(divPoly6, {\n    type: 'line',\n    data: chartDataPoly6,\n    options: {\n      responsive: true,\n      title: {\n        display: true,\n        text: 'SPH kernel:poly6'\n      },\n      scales: {\n        xAxes: [{\n          type: 'linear',\n          display: true,\n          ticks: {\n            major: {\n              fontStyle: 'bold',\n              fontColor: '#FF0000'\n            }\n          }\n        }],\n        yAxes: [{\n          display: true,\n          scaleLabel: {\n            display: true,\n            labelString: 'value'\n          },\n          ticks: {\n            min: -10,\n            max: 10\n          }\n        }]\n      }\n    }\n  });\n  var divSpiky = document.getElementById('chart_spiky');\n  var ChartSpiky = new chart_js_1.Chart(divSpiky, {\n    type: 'line',\n    data: chartDataSpiky,\n    options: {\n      responsive: true,\n      title: {\n        display: true,\n        text: 'SPH kernel:spiky'\n      },\n      scales: {\n        xAxes: [{\n          type: 'linear',\n          display: true,\n          ticks: {\n            major: {\n              fontStyle: 'bold',\n              fontColor: '#FF0000'\n            }\n          }\n        }],\n        yAxes: [{\n          display: true,\n          scaleLabel: {\n            display: true,\n            labelString: 'value'\n          },\n          ticks: {\n            min: -15,\n            max: 30\n          }\n        }]\n      }\n    }\n  });\n}\n\nexports.SPH_Kernel_Demo = SPH_Kernel_Demo;\n\n//# sourceURL=webpack:///./examples/sph_kernel_demo.ts?");
+
+/***/ }),
+
+/***/ "./examples/tsmath.ts":
+/*!****************************!*\
+  !*** ./examples/tsmath.ts ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n/*\r\n * @Author: Xu.Wang\r\n * @Date: 2020-03-28 03:29:28\r\n * @Last Modified by: Xu.Wang\r\n * @Last Modified time: 2020-03-29 00:50:14\r\n */\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n\nvar sph_kernel_demo_1 = __webpack_require__(/*! ./sph_kernel_demo */ \"./examples/sph_kernel_demo.ts\");\n\nsph_kernel_demo_1.SPH_Kernel_Demo();\n\n//# sourceURL=webpack:///./examples/tsmath.ts?");
+
+/***/ }),
 
 /***/ "./node_modules/chart.js/dist/Chart.js":
 /*!*********************************************!*\
@@ -1524,30 +1548,6 @@ eval("/* WEBPACK VAR INJECTION */(function(module) {var require;//! moment.js\n\
 /***/ (function(module, exports) {
 
 eval("module.exports = function(module) {\n\tif (!module.webpackPolyfill) {\n\t\tmodule.deprecate = function() {};\n\t\tmodule.paths = [];\n\t\t// module.parent = undefined by default\n\t\tif (!module.children) module.children = [];\n\t\tObject.defineProperty(module, \"loaded\", {\n\t\t\tenumerable: true,\n\t\t\tget: function() {\n\t\t\t\treturn module.l;\n\t\t\t}\n\t\t});\n\t\tObject.defineProperty(module, \"id\", {\n\t\t\tenumerable: true,\n\t\t\tget: function() {\n\t\t\t\treturn module.i;\n\t\t\t}\n\t\t});\n\t\tmodule.webpackPolyfill = 1;\n\t}\n\treturn module;\n};\n\n\n//# sourceURL=webpack:///(webpack)/buildin/module.js?");
-
-/***/ }),
-
-/***/ "./src/examples/sph_kernel_demo.ts":
-/*!*****************************************!*\
-  !*** ./src/examples/sph_kernel_demo.ts ***!
-  \*****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n/*\r\n * @Author: Xu.Wang\r\n * @Date: 2020-03-29 00:42:39\r\n * @Last Modified by: Xu.Wang\r\n * @Last Modified time: 2020-03-29 00:53:57\r\n */\n\nvar sph_kernel_1 = __webpack_require__(/*! ../sph/sph_kernel */ \"./src/sph/sph_kernel.ts\");\n\nvar chart_js_1 = __webpack_require__(/*! chart.js */ \"./node_modules/chart.js/dist/Chart.js\");\n\nfunction SPH_Kernel_Demo() {\n  var vMin = -1;\n  var vMax = 1;\n  var interval = 1000;\n  var vStep = (vMax - vMin) / interval;\n  var smoothRadius = 1;\n  var poly6 = new sph_kernel_1.SphKernelPoly6(smoothRadius);\n  var spiky = new sph_kernel_1.SphKernelSpiky(smoothRadius);\n  var chartDataPoly6 = {\n    datasets: [{\n      label: 'poly6',\n      \"function\": function _function(x) {\n        return poly6.get(x);\n      },\n      data: [],\n      borderColor: 'rgba(75, 192, 192, 1)',\n      fill: false\n    }, {\n      label: 'poly6_firstDerivative',\n      \"function\": function _function(x) {\n        return poly6.getFirstDerivative(x);\n      },\n      data: [],\n      borderColor: 'rgba(192, 75, 192, 1)',\n      fill: false\n    }, {\n      label: 'poly6_secondDerivative',\n      \"function\": function _function(x) {\n        return poly6.getSecondDerivative(x);\n      },\n      data: [],\n      borderColor: 'rgba(192, 192, 75, 1)',\n      fill: false\n    }]\n  };\n  var chartDataSpiky = {\n    datasets: [{\n      label: 'spiky',\n      \"function\": function _function(x) {\n        return spiky.get(x);\n      },\n      data: [],\n      borderColor: 'rgba(75, 192, 192, 1)',\n      fill: false\n    }, {\n      label: 'spiky_firstDerivative',\n      \"function\": function _function(x) {\n        return spiky.getFirstDerivative(x);\n      },\n      data: [],\n      borderColor: 'rgba(192, 75, 192, 1)',\n      fill: false\n    }, {\n      label: 'spiky_secondDerivative',\n      \"function\": function _function(x) {\n        return spiky.getSecondDerivative(x);\n      },\n      data: [],\n      borderColor: 'rgba(192, 192, 75, 1)',\n      fill: false\n    }]\n  };\n  chart_js_1.Chart.pluginService.register({\n    beforeInit: function beforeInit(chart) {\n      var data = chart.config.data;\n\n      for (var i = 0; i < data.datasets.length; i++) {\n        for (var _x = vMin; _x <= vMax; _x += vStep) {\n          var fct = data.datasets[i][\"function\"];\n\n          var _y = fct(_x);\n\n          data.datasets[i].data.push({\n            x: _x,\n            y: _y\n          });\n        }\n      }\n    }\n  });\n  var divPoly6 = document.getElementById('chart_poly6');\n  var ChartPoly6 = new chart_js_1.Chart(divPoly6, {\n    type: 'line',\n    data: chartDataPoly6,\n    options: {\n      responsive: true,\n      title: {\n        display: true,\n        text: 'SPH kernel:poly6'\n      },\n      scales: {\n        xAxes: [{\n          type: 'linear',\n          display: true,\n          ticks: {\n            major: {\n              fontStyle: 'bold',\n              fontColor: '#FF0000'\n            }\n          }\n        }],\n        yAxes: [{\n          display: true,\n          scaleLabel: {\n            display: true,\n            labelString: 'value'\n          },\n          ticks: {\n            min: -10,\n            max: 10\n          }\n        }]\n      }\n    }\n  });\n  var divSpiky = document.getElementById('chart_spiky');\n  var ChartSpiky = new chart_js_1.Chart(divSpiky, {\n    type: 'line',\n    data: chartDataSpiky,\n    options: {\n      responsive: true,\n      title: {\n        display: true,\n        text: 'SPH kernel:spiky'\n      },\n      scales: {\n        xAxes: [{\n          type: 'linear',\n          display: true,\n          ticks: {\n            major: {\n              fontStyle: 'bold',\n              fontColor: '#FF0000'\n            }\n          }\n        }],\n        yAxes: [{\n          display: true,\n          scaleLabel: {\n            display: true,\n            labelString: 'value'\n          },\n          ticks: {\n            min: -15,\n            max: 30\n          }\n        }]\n      }\n    }\n  });\n}\n\nexports.SPH_Kernel_Demo = SPH_Kernel_Demo;\n\n//# sourceURL=webpack:///./src/examples/sph_kernel_demo.ts?");
-
-/***/ }),
-
-/***/ "./src/examples/tsmath.ts":
-/*!********************************!*\
-  !*** ./src/examples/tsmath.ts ***!
-  \********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-eval("\n/*\r\n * @Author: Xu.Wang\r\n * @Date: 2020-03-28 03:29:28\r\n * @Last Modified by: Xu.Wang\r\n * @Last Modified time: 2020-03-29 00:50:14\r\n */\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n\nvar sph_kernel_demo_1 = __webpack_require__(/*! ./sph_kernel_demo */ \"./src/examples/sph_kernel_demo.ts\");\n\nsph_kernel_demo_1.SPH_Kernel_Demo();\n\n//# sourceURL=webpack:///./src/examples/tsmath.ts?");
 
 /***/ }),
 

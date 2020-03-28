@@ -2,11 +2,11 @@
  * @Author: Xu.Wang 
  * @Date: 2020-03-27 20:18:12 
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-03-27 20:36:15
+ * @Last Modified time: 2020-03-29 00:54:20
  */
 module.exports = {
     mode: process.env.NODE_ENV || "development",
-    entry: "./examples/tsmath.ts",
+    entry: "./src/examples/tsmath.ts",
     output: {
         filename: "tsmath.js",
         path: __dirname + "/dist"

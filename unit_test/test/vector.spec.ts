@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import 'mocha'
 import { Vector } from '../../src/math/vector'
 
 describe('Vector', () => {
@@ -132,6 +133,32 @@ describe('Vector', () => {
             let v1 = new Vector(4, new Array(3.0, -1.0, 2.0, 5.0))
             expect(v1.dot(v)).to.equal(37.5)
             expect(v1.dot(v1)).to.equal(39)
+        })
+
+    })
+
+    describe('Norm', () => {
+        it('normalize current vector', () => {
+            let v1 = new Vector(4, new Array(4.0, 2.0, 2.0, 5.0))
+            v1.normalize()
+            expect(v1.data()[0]).to.equal(4.0/7.0)
+            expect(v1.data()[1]).to.equal(2.0 / 7.0)
+            expect(v1.data()[2]).to.equal(2.0 / 7.0)
+            expect(v1.data()[3]).to.equal(5.0/7.0)
+        })
+
+        it('return a normalized vector', () => {
+            let v1 = new Vector(4, new Array(4.0, 2.0, 2.0, 5.0))
+            let v2 = v1.normalized()
+            expect(v1.data()[0]).to.equal(4.0)
+            expect(v1.data()[1]).to.equal(2.0)
+            expect(v1.data()[2]).to.equal(2.0)
+            expect(v1.data()[3]).to.equal(5.0)
+            
+            expect(v2.data()[0]).to.equal(4.0/7.0)
+            expect(v2.data()[1]).to.equal(2.0 / 7.0)
+            expect(v2.data()[2]).to.equal(2.0 / 7.0)
+            expect(v2.data()[3]).to.equal(5.0/7.0)
         })
     })
 })

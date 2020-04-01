@@ -1,3 +1,9 @@
+/*
+ * @Author: Xu.Wang
+ * @Date: 2020-03-31 16:59:22
+ * @Last Modified by: Xu.Wang
+ * @Last Modified time: 2020-03-31 17:01:14
+ */
 import { Vector } from '../math/vector'
 /* =========================================================================
  *
@@ -14,9 +20,9 @@ import { Vector } from '../math/vector'
  *  ----------
  *  1d array x such that Ax = b
  * ========================================================================= */
-export function gram_schmidt_process(v: Array<Vector>) {
+export function gram_schmidt_process(v: Array<Vector>): Array<Vector> {
   let size = v.length
-  if (size === 0) return -1
+  if (size === 0) return new Array<Vector>()
   let dim = v[0].size()
   let u = Array<Vector>(size)
   for (let i = 0; i < size; i++) {

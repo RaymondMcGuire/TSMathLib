@@ -1,8 +1,10 @@
-/* =========================================================================
- *
- *  interface.ts
- *  interface for some functions
- * ========================================================================= */
+/*
+ * @Author: Xu.Wang
+ * @Date: 2020-03-31 17:29:48
+ * @Last Modified by:   Xu.Wang
+ * @Last Modified time: 2020-03-31 17:29:48
+ */
+
 export interface MatrixIndex {
   (i: number, j: number): void
 }
@@ -15,4 +17,8 @@ export interface MatrixSplit {
 
 export interface SparseMatrixData {
   (data: [number, number, number]): void
+}
+
+export interface VectorData {
+  (data: number): void
 }

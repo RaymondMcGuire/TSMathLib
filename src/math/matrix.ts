@@ -215,7 +215,7 @@ export class Matrix {
       let d = 0
 
       for (let n = 0; n < this.cols(); n++) {
-        // console.log("-------------------------------")
+        // console.l'-------------------------------'--")
         // console.log(this.getDataByIndexs(i, n));
         // console.log(m.getDataByIndexs(n, j))
         // console.log(this.getDataByIndexs(i, n) * m.getDataByIndexs(n, j))

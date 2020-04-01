@@ -1,12 +1,9 @@
 import { expect } from 'chai'
+import 'mocha'
 import { gram_schmidt_process } from '../../src/numerical/gram_schmidt_process'
 import { Vector } from '../../src/math/vector'
+import {isSimilar} from "../../src/math/math_utils"
 
-function isSimilar(val1: number, val2: number, epsilon: number) {
-    if (Math.abs(val1 - val2) > epsilon) return false
-
-    return true
-}
 
 describe('Gram–Schmidt process method', () => {
     it('Gram–Schmidt process method', () => {

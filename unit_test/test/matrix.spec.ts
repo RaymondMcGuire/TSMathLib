@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import 'mocha'
 import { Vector } from '../../src/math/vector'
 import { Matrix } from '../../src/math/matrix'
 import { SparseMatrix } from '../../src/math/sparse_matrix'
@@ -28,9 +29,10 @@ describe('Matrix', () => {
     it('matrix multiply', () => {
         let m = new Matrix(3, 3, new Array(1, 2, 3, 3, 2, 1, 1, 2, 3))
         let m1 = new Matrix(3, 3, new Array(1, 3, 1, 2, 2, 2, 3, 1, 3))
-        let m2 = new Matrix(3, 3, new Array(13, 10, 13, 10, 13, 10, 13, 10, 13))
-        expect(m2.same(m.mulMat(m1))).to.equal(true)
+        let m2 = new Matrix(3, 3, new Array(14, 10, 14, 10, 14, 10, 14, 10, 14))
 
+        expect(m2.same(m.mulMat(m1))).to.equal(true)
+  
         let v = new Vector(3, new Array(0.2, 0.1, 0.1))
         let res_v = m.mulVec(v)
         let b_equal = res_v.isEqual(new Vector(3, new Array(0.7, 0.9, 0.7)))

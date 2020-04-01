@@ -1,12 +1,19 @@
-/* =========================================================================
- *
- *  vector.ts
+/*
+ * @Author: Xu.Wang
+ * @Date: 2020-03-31 17:30:28
+ * @Last Modified by: Xu.Wang
+ * @Last Modified time: 2020-04-01 17:15:15
+ */
+
+import { absMax, absMin } from './math_utils'
+import { VectorData } from './interface'
+
+/**
+ * Vector
  *  T-D vector data
  *  T:type,default setting is number
  *  D:dimension
- * ========================================================================= */
-import { absMax, absMin } from './math_utils'
-
+ */
 export class Vector {
   _elements: Array<number>
   _dimension: number
@@ -93,8 +100,19 @@ export class Vector {
     return Math.sqrt(this.lengthSquared())
   }
 
+  /**
+   * Normalizes current vector
+   */
   normalize() {
     this.idiv(this.length())
+  }
+
+  /**
+   * Normalized vector
+   * @returns normalized vector
+   */
+  normalized(): Vector {
+    return this.div(this.length())
   }
 
   sum() {
@@ -303,6 +321,31 @@ export class Vector {
     this.set(this.mul(params))
   }
 
+  rdiv(params?: any) {
+    let _i = 0
+    if (typeof params === 'object') {
+      let v = params
+      if (v.size() !== this.size()) return new Vector(1, [-1])
+
+      let newV = new Vector(v.size(), v.data())
+      for (_i = 0; _i < newV.size(); _i++) {
+        newV.data()[_i] /= this.data()[_i]
+      }
+
+      return newV
+    } else if (typeof params === 'number') {
+      let s = params
+      if (s === 0) return new Vector(1, [-1])
+      let newV = new Vector(this.size(), this.data())
+      for (_i = 0; _i < newV.size(); _i++) {
+        newV.data()[_i] = s / newV.data()[_i]
+      }
+
+      return newV
+    }
+    return new Vector(1, [-1])
+  }
+
   setAt(idx: number, val: number) {
     if (idx < 0 || idx >= this.size()) {
       return undefined
@@ -319,5 +362,20 @@ export class Vector {
    */
   static proj(u: Vector, v: Vector) {
     return u.mul(v.dot(u) / u.dot(u))
+  }
+
+  forEachData(data: VectorData) {
+    for (let _i = 0; _i < this.size(); _i++) {
+      data(this.at(_i))
+    }
+  }
+
+  printVector() {
+    let printStr = '[ '
+    this.forEachData((d: number) => {
+      printStr += d.toString() + ' '
+    })
+    printStr += ']'
+    console.log(printStr)
   }
 }

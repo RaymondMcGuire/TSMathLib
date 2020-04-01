@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import 'mocha'
 import { gaussian_elimination_solve } from '../../src/numerical/gaussian_elimination'
 import { Matrix } from '../../src/math/matrix'
 

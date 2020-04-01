@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import 'mocha'
 import {
     conjugate_grad,
     conjugate_grad_spMatrix

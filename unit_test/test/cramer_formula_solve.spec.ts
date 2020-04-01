@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import 'mocha'
 import { cramer_formula_solve } from '../../src/numerical/cramer_formula'
 import { Matrix } from '../../src/math/matrix'
 

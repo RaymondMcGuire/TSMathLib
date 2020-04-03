@@ -32,4 +32,17 @@ export class Point3 {
   clone(): Point3 {
     return new Point3(this.x, this.y, this.z)
   }
+
+  distanceSquaredTo(others: Point3): number {
+    let diffX = this.x - others.x
+    let diffY = this.y - others.y
+    let diffZ = this.z - others.z
+    let ret = diffX * diffX + diffY * diffY + diffZ * diffZ
+
+    return ret
+  }
+
+  distanceTo(others: Point3) {
+    return Math.sqrt(this.distanceSquaredTo(others))
+  }
 }

@@ -2,7 +2,7 @@
  * @Author: Xu.Wang
  * @Date: 2020-03-28 02:04:37
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-04-01 19:46:41
+ * @Last Modified time: 2020-04-03 19:22:21
  * @Description: simple math functions
  */
 
@@ -26,6 +26,10 @@ export function divdec(x: number, y: number) {
 
 export function swap(x: number, y: number) {
   return [y, x]
+}
+
+export function square(x: number) {
+  return x * x
 }
 
 export function clamp(val: number, min: number, max: number): number {

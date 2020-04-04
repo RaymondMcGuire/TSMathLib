@@ -2,11 +2,11 @@
  * @Author: Xu.Wang 
  * @Date: 2020-03-27 20:18:12 
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-03-29 00:54:20
+ * @Last Modified time: 2020-04-05 01:34:58
  */
 module.exports = {
     mode: process.env.NODE_ENV || "development",
-    entry: "./src/examples/tsmath.ts",
+    entry: "./examples/src/tsmath.ts",
     output: {
         filename: "tsmath.js",
         path: __dirname + "/dist"
@@ -23,7 +23,7 @@ module.exports = {
                 {
                     loader: "ts-loader",
                     options: {
-                        reportFiles: ['lib/*.ts', 'ds/*.ts']
+                        reportFiles: ['src/*.ts', 'ds/*.ts']
                     }
                 }
             ],

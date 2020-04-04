@@ -2,7 +2,7 @@
  * @Author: Xu.Wang
  * @Date: 2020-03-31 15:12:02
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-04-04 00:04:01
+ * @Last Modified time: 2020-04-05 01:06:38
  */
 
 import { Vector3 } from '../math/vector3'
@@ -110,7 +110,7 @@ export class SPH extends ParticleSystem {
 
     for (let i = 0; i < numberOfParticles; i++) {
       let neighbors: Array<number> = particles.neighborLists()[i]
-      for (const j: number in neighbors) {
+      for (const j in neighbors) {
         let dist = x[i].distanceTo(x[j])
         f[i] = f[i].add(
           v[j]
@@ -161,7 +161,7 @@ export class SPH extends ParticleSystem {
 
     for (let i = 0; i < numberOfParticles; i++) {
       let neighbors: Array<number> = particles.neighborLists()[i]
-      for (const j: number in neighbors) {
+      for (const j in neighbors) {
         let dist = positions[i].distanceTo(positions[j])
 
         if (dist > 0.0) {

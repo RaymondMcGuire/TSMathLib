@@ -2,9 +2,9 @@
  * @Author: Xu.Wang
  * @Date: 2020-03-29 00:42:39
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-03-29 00:53:57
+ * @Last Modified time: 2020-04-04 23:01:59
  */
-import { SphKernelPoly6, SphKernelSpiky } from '../sph/sph_kernel'
+import { SphKernelPoly6, SphKernelSpiky } from '../../src/sph/sph_kernel'
 import { Chart } from 'chart.js'
 
 export function SPH_Kernel_Demo() {

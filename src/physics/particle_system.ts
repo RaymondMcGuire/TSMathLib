@@ -2,7 +2,7 @@
  * @Author: Xu.Wang
  * @Date: 2020-04-03 18:18:27
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-04-04 00:11:08
+ * @Last Modified time: 2020-04-05 01:07:09
  */
 import { ParticleSystemData } from './particle_system_data'
 import { Vector3 } from '../math/vector3'
@@ -18,9 +18,9 @@ export class ParticleSystem {
   _wind: ConstantVectorField
 
   _particleSystemData: ParticleSystemData
-  _newPositions: Array<Vector3>
-  _newVelocities: Array<Vector3>
-  _newForces: Array<Vector3>
+  _newPositions: Array<Vector3> = new Array<Vector3>()
+  _newVelocities: Array<Vector3> = new Array<Vector3>()
+  _newForces: Array<Vector3> = new Array<Vector3>()
 
   constructor() {
     this._particleSystemData = new ParticleSystemData(0)

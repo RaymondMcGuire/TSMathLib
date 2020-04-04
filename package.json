@@ -5,6 +5,12 @@
     "repository": "https://github.com/RaymondMcGuire/TSMathLib.git",
     "author": "wang xu <raymondmg@foxmail.com>",
     "license": "MIT",
+    "description": "Typescript Version Math/Physics/CG Library",
+    "keywords": ["CG"],
+    "bugs":{"email": "raymondmg@foxmail.com"},
+    "contributors":["RaymondMG"],
+    "homepage":"https://raymondmcguire.github.io/TSMathLib/",
+    "engines":{"vscode": "^1.22.0"},
     "dependencies": {
         "chart.js": "^2.9.3",
         "typescript": "^3.8.3",

@@ -22,7 +22,9 @@ describe('Vector', () => {
                 expect(element).to.equal(ary[index])
             }
         })
+    })
 
+    describe('Method', () => {
         let v = new Vector(4, new Array(3, 1, 2, 5))
         it('setZeros/set function test', () => {
             v.setZero()

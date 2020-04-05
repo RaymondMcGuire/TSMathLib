@@ -20,22 +20,30 @@ describe('Matrix', () => {
     })
 
     it('matrix transpose', () => {
-        let m = new Matrix(3, 3, new Array(1, 2, 3, 3, 2, 1, 1, 2, 3))
+        let m = new Matrix(3, 3, new Array(1, 2, 3, 3, 2, 1, 1, 2, 3)).transpose()
         let m1 = new Matrix(3, 3, new Array(1, 3, 1, 2, 2, 2, 3, 1, 3))
-        m.transpose()
         expect(m.same(m1)).to.equal(true)
     })
 
     it('matrix multiply', () => {
-        let m = new Matrix(3, 3, new Array(1, 2, 3, 3, 2, 1, 1, 2, 3))
-        let m1 = new Matrix(3, 3, new Array(1, 3, 1, 2, 2, 2, 3, 1, 3))
-        let m2 = new Matrix(3, 3, new Array(14, 10, 14, 10, 14, 10, 14, 10, 14))
 
+        // correct result
+        let m = new Matrix(3, 4, new Array(1, 2, 3, 4, 4, 3, 2, 1, 1,2,3,4))
+        let m1 = new Matrix(4, 3, new Array(1,1,3,2,2,2,3,3,1,1,1,2))
+        let m2 = new Matrix(3, 3, new Array(18,18,18,17,17,22,18,18,18))
         expect(m2.same(m.mulMat(m1))).to.equal(true)
-  
+
+        // error result
+        let m3 = new Matrix(3, 3, new Array(1, 2, 3, 4, 4, 3, 2, 1, 1))
+        let m4 = new Matrix(4, 3, new Array(1,1,3,2,2,2,3,3,1,1,1,2))
+        let m5 = new Matrix(3,3).zeros()
+
+        expect(m5.same(m3.mulMat(m4))).to.equal(true)
+        
+        // matrix multi vec
         let v = new Vector(3, new Array(0.2, 0.1, 0.1))
-        let res_v = m.mulVec(v)
-        let b_equal = res_v.isEqual(new Vector(3, new Array(0.7, 0.9, 0.7)))
+        let res_v = m2.mulVec(v)
+        let b_equal = res_v.isEqual(new Vector(3, new Array(7.2, 7.3, 7.2)))
         expect(b_equal).to.equal(true)
     })
 
@@ -113,8 +121,8 @@ describe('Matrix', () => {
                     [1, 6, 2],
                     [2, 0, -7]
                 )
-            )
-            m.transpose()
+            ).transpose()
+            
             expect(m.data()).to.eql(
                 new Array<[number, number, number]>(
                     [0, 2, -7],

@@ -1,14 +1,17 @@
-/* =========================================================================
- *
- *  matrix.ts
- *  M*N dimention matrix
- * ========================================================================= */
+/*
+ * @Author: Xu.Wang
+ * @Date: 2020-04-05 20:18:48
+ * @Last Modified by: Xu.Wang
+ * @Last Modified time: 2020-04-06 01:51:14
+ * @Description: M * N Dimention Matrix
+ */
+
 import { muldec } from './math_utils'
 import { Vector } from './vector'
 import { SparseMatrix } from './sparse_matrix'
 import { MatrixIndex, MatrixData, MatrixSplit } from './interface'
 export class Matrix {
-  private _elements: Array<number>
+  private _elements: Array<number> = new Array<number>()
   private _M: number
   private _N: number
   private _size: number
@@ -26,15 +29,20 @@ export class Matrix {
         this._elements[_i] = 0
       }
     } else {
-      // TODO check size
-      this._elements = new Array<number>(this.size())
-      for (_i = 0; _i < params.length; _i++) {
-        this._elements[_i] = params[_i]
+      // check size
+      if (M * N === params.length) {
+        this._elements = new Array<number>(this.size())
+        for (_i = 0; _i < params.length; _i++) {
+          this._elements[_i] = params[_i]
+        }
+      } else {
+        console.log('Matrix init error: size is not equal to M*N')
+        return
       }
     }
   }
 
-  set(params: Matrix) {
+  private _set(params: Matrix) {
     if (
       params.size() !== this.size() ||
       params.rows() !== this.rows() ||
@@ -127,28 +135,24 @@ export class Matrix {
     }
   }
 
-  private _ones() {
+  private _fill(n: number) {
     let m = new Matrix(this.rows(), this.cols())
     m.forEachIndex((i, j) => {
-      m.setDataByIndexs(i, j, 1)
+      m.setDataByIndexs(i, j, n)
     })
     return m
   }
 
   ones() {
-    this.set(this._ones())
+    return this._fill(1)
   }
 
-  private _values(v: number) {
-    let m = new Matrix(this.rows(), this.cols())
-    m.forEachIndex((i, j) => {
-      m.setDataByIndexs(i, j, v)
-    })
-    return m
+  zeros() {
+    return this._fill(0)
   }
 
-  setValues(v: number) {
-    this.set(this._values(v))
+  fillValues(v: number) {
+    this._set(this._fill(v))
   }
 
   private _random() {
@@ -160,7 +164,7 @@ export class Matrix {
   }
 
   random() {
-    this.set(this._random())
+    return this._random()
   }
 
   private _transpose() {
@@ -184,7 +188,7 @@ export class Matrix {
 
   mat2Vec() {
     if (this.rows() !== 1 && this.cols() !== 1) {
-      console.log('can not convert to vector!')
+      console.log('matrix can not convert to vector!', this.rows(), this.cols())
       return new Vector(1, [-1])
     }
 
@@ -193,7 +197,7 @@ export class Matrix {
   }
 
   transpose() {
-    this.set(this._transpose())
+    return this._transpose()
   }
 
   sub(m: Matrix) {
@@ -205,9 +209,22 @@ export class Matrix {
     return mm
   }
 
-  mulMat(m: Matrix) {
-    // TODO check matrix shape is right or not
-    // A.cols == B.rows
+  /**
+   * Matrix this Multiply Matrix m
+   * AxB mul BxC = AxC
+   * @param m
+   * @returns
+   */
+  mulMat(m: any): Matrix {
+    // check matrix shape is right or not
+    if (this.cols() !== m.rows()) {
+      console.log(
+        'Matrix Multiply Error: Matrix1 column is not equal to Matrix2 row:',
+        this.cols(),
+        m.rows()
+      )
+      return this.zeros()
+    }
     let newM = this.rows()
     let newN = m.cols()
     let mm = new Matrix(newM, newN)
@@ -232,7 +249,7 @@ export class Matrix {
   mulVec(v: Vector) {
     // check shape
     if (v.size() !== this.cols()) {
-      console.log('vector shape is not right!')
+      console.log('vector shape is not right!', v.size(), this.cols())
       return new Vector(1, [-1])
     }
 
@@ -246,11 +263,29 @@ export class Matrix {
   same(m: Matrix) {
     let bSame = true
     // check matrix shape
-    if (this.cols() !== m.cols() || this.rows() !== m.rows()) bSame = false
+    if (this.cols() !== m.cols() || this.rows() !== m.rows()) {
+      console.log(
+        'Matrix Dimension is not correct:',
+        this.cols(),
+        this.rows(),
+        m.cols(),
+        m.rows()
+      )
+      return false
+    }
 
     // check elements
     this.forEachIndex((i, j) => {
-      if (this.getDataByIndexs(i, j) !== m.getDataByIndexs(i, j)) bSame = false
+      if (this.getDataByIndexs(i, j) !== m.getDataByIndexs(i, j)) {
+        console.log(
+          'Matrix values is not correct:',
+          i,
+          j,
+          this.getDataByIndexs(i, j),
+          m.getDataByIndexs(i, j)
+        )
+        bSame = false
+      }
     })
 
     return bSame

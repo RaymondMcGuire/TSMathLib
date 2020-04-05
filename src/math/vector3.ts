@@ -1,3 +1,9 @@
+/*
+ * @Author: Xu.Wang
+ * @Date: 2020-04-05 20:58:08
+ * @Last Modified by: Xu.Wang
+ * @Last Modified time: 2020-04-05 23:47:02
+ */
 import { Vector } from './vector'
 
 export class Vector3 extends Vector {
@@ -55,9 +61,14 @@ export class Vector3 extends Vector {
     return new Vector3(divv.data()[0], divv.data()[1], divv.data()[2])
   }
 
+  rsub(v3: any): Vector3 {
+    let rsubv = super.rsub(v3)
+    return new Vector3(rsubv.data()[0], rsubv.data()[1], rsubv.data()[2])
+  }
+
   rdiv(v3: any): Vector3 {
-    let divv = super.rdiv(v3)
-    return new Vector3(divv.data()[0], divv.data()[1], divv.data()[2])
+    let rdivv = super.rdiv(v3)
+    return new Vector3(rdivv.data()[0], rdivv.data()[1], rdivv.data()[2])
   }
 
   dot(v3: Vector3): number {
@@ -89,5 +100,17 @@ export class Vector3 extends Vector {
       Math.sqrt(tv.at(1)),
       Math.sqrt(tv.at(2))
     )
+  }
+
+  tangential(): [Vector3, Vector3] {
+    let a = (Math.abs(this.y()) > 0 || Math.abs(this.z()) > 0
+      ? new Vector3(1, 0, 0)
+      : new Vector3(0, 1, 0)
+    )
+      .cross(this)
+      .normalized()
+
+    let b = this.cross(a)
+    return [a, b]
   }
 }

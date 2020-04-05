@@ -1,15 +1,19 @@
-/* =========================================================================
- *
- *  quaternion.ts
- *
+/*
+ * @Author: Xu.Wang
+ * @Date: 2020-04-05 23:25:54
+ * @Last Modified by: Xu.Wang
+ * @Last Modified time: 2020-04-06 01:58:28
+ * @Description  q = w + xi + yj + zk
  *  q_v = (q_x,q_y,q_z) = iq_x+jq_y+kq_z
  *  \hat{q} = (q_v,q_w) = q_v + q_w = iq_x+jq_y+kq_z+q_w
  *  i^2 = j^2 = k^2 = ijk = -1
  *  jk = -kj = i, ki = -ik = j, ij = -ji = k
- *
- * ========================================================================= */
-import { Matrix4x4 } from '../../webgl/matrix4x4'
+ */
+
+import { Matrix4x4 } from './matrix4x4'
 import { Vector3 } from './vector3'
+import { TS_EPSILON, TS_PI } from './math_constants'
+import { Matrix3x3 } from './matrix3x3'
 
 export class Quaternion {
   x: number
@@ -36,6 +40,52 @@ export class Quaternion {
     }
   }
 
+  set(x: number, y: number, z: number, w: number) {
+    this.x = x
+    this.y = y
+    this.z = z
+    this.w = w
+  }
+
+  setByAxisAngle(axis: Vector3, angle: number) {
+    let axisLengthSquared = axis.lengthSquared()
+
+    if (axisLengthSquared < TS_EPSILON) {
+      this.setIdentity()
+    } else {
+      let normalizedAxis = axis.normalized()
+      let s = Math.sin(angle / 2)
+
+      this.x = normalizedAxis.x() * s
+      this.y = normalizedAxis.y() * s
+      this.z = normalizedAxis.z() * s
+      this.w = Math.cos(angle / 2)
+    }
+  }
+
+  setByFromTo(from: Vector3, to: Vector3) {
+    let axis = from.cross(to)
+
+    let fromLengthSquared = from.lengthSquared()
+    let toLengthSquared = to.lengthSquared()
+
+    if (fromLengthSquared < TS_EPSILON || toLengthSquared < TS_EPSILON) {
+      this.setIdentity()
+    } else {
+      let axisLengthSquared = axis.lengthSquared()
+      // In case two vectors are exactly the opposite, pick orthogonal vector
+      // for axis.
+      if (axisLengthSquared < TS_EPSILON) {
+        axis = from.tangential()[0]
+      }
+
+      this.set(axis.x(), axis.y(), axis.z(), from.dot(to))
+      this.w += this.l2Norm()
+
+      this.normalize()
+    }
+  }
+
   /**
    * multiply
    * @param q quaternion q(q_x,q_y,q_z,q_w)
@@ -49,12 +99,47 @@ export class Quaternion {
    *    = (q_v x r_w + r_w*q_v + q_w*r_v, q_w*r_w - q_v・r_v)
    */
   mul(r: Quaternion): Quaternion {
-    let q = this
-    let _x = q.y * r.z - q.z * r.y + r.w * q.x + q.w * r.x
-    let _y = q.z * r.x - q.x * r.z + r.w * q.y + q.w * r.y
-    let _z = q.x * r.y - q.y * r.x + r.w * q.z + q.w * r.z
-    let _w = q.w * r.w - q.x * r.x - q.y * r.y - q.z * r.z
+    let _x = this.y * r.z - this.z * r.y + r.w * this.x + this.w * r.x
+    let _y = this.z * r.x - this.x * r.z + r.w * this.y + this.w * r.y
+    let _z = this.x * r.y - this.y * r.x + r.w * this.z + this.w * r.z
+    let _w = this.w * r.w - this.x * r.x - r.y * this.y - this.z * r.z
     return new Quaternion(_x, _y, _z, _w)
+  }
+
+  rmul(q: Quaternion): Quaternion {
+    return new Quaternion(
+      q.w * this.x + q.x * this.w + q.y * this.z - q.z * this.y,
+      q.w * this.y - q.x * this.z + q.y * this.w + q.z * this.x,
+      q.w * this.z + q.x * this.y - q.y * this.x + q.z * this.w,
+      q.w * this.w - q.x * this.x - q.y * this.y - q.z * this.z
+    )
+  }
+
+  imul(q: Quaternion) {
+    let r = this.mul(q)
+    this.set(r.x, r.y, r.z, r.w)
+  }
+
+  mulV3(v: Vector3): Vector3 {
+    let _2xx = 2 * this.x * this.x
+    let _2yy = 2 * this.y * this.y
+    let _2zz = 2 * this.z * this.z
+    let _2xy = 2 * this.x * this.y
+    let _2xz = 2 * this.x * this.z
+    let _2xw = 2 * this.x * this.w
+    let _2yz = 2 * this.y * this.z
+    let _2yw = 2 * this.y * this.w
+    let _2zw = 2 * this.z * this.w
+
+    return new Vector3(
+      (1 - _2yy - _2zz) * v.x() + (_2xy - _2zw) * v.y() + (_2xz + _2yw) * v.z(),
+      (_2xy + _2zw) * v.x() + (1 - _2zz - _2xx) * v.y() + (_2yz - _2xw) * v.z(),
+      (_2xz - _2yw) * v.x() + (_2yz + _2xw) * v.y() + (1 - _2yy - _2xx) * v.z()
+    )
+  }
+
+  dot(q: Quaternion) {
+    return this.x * q.x + this.y * q.y + this.z * q.z + this.w * q.w
   }
 
   add(r: Quaternion): Quaternion {
@@ -66,29 +151,69 @@ export class Quaternion {
     return new Quaternion(-this.x, -this.y, -this.z, this.w)
   }
 
-  norm(): Quaternion {
-    let _x = 0
-    let _y = 0
-    let _z = 0
-    let _w = 1
-    let l = Math.sqrt(
-      this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w
-    )
-    if (l !== 0) {
-      l = 1 / l
-      _x = this.x * l
-      _y = this.y * l
-      _z = this.z * l
-      _w = this.w * l
-    }
-    return new Quaternion(_x, _y, _z, _w)
-  }
-
   identity(): Quaternion {
     return new Quaternion(0, 0, 0, 1)
   }
 
-  rotate(angle: number, axis: Array<number>): Quaternion {
+  setIdentity() {
+    this.set(0, 0, 0, 1)
+  }
+
+  axis(): Vector3 {
+    let result = new Vector3(this.x, this.y, this.z)
+    result.normalize()
+
+    if (2 * Math.acos(this.w) < TS_PI) {
+      return result
+    } else {
+      return result.mul(-1)
+    }
+  }
+
+  angle(): number {
+    let result = 2 * Math.acos(this.w)
+
+    if (result < TS_PI) {
+      return result
+    } else {
+      // Wrap around
+      return 2 * TS_PI - result
+    }
+  }
+
+  getAxisAngle(): [Vector3, number] {
+    let axis = new Vector3(this.x, this.y, this.z)
+    axis.normalize()
+    let angle = 2 * Math.acos(this.w)
+
+    if (angle > TS_PI) {
+      // Wrap around
+      axis = axis.mul(-1)
+      angle = 2 * TS_PI - angle
+    }
+    return [axis, angle]
+  }
+
+  inverse(): Quaternion {
+    let denom =
+      this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z
+    return new Quaternion(
+      -this.x / denom,
+      -this.y / denom,
+      -this.z / denom,
+      this.w / denom
+    )
+  }
+
+  rotate(angleInRadians: number) {
+    let axisAngle = this.getAxisAngle()
+
+    axisAngle[1] += angleInRadians
+
+    this.setByAxisAngle(axisAngle[0], axisAngle[1])
+  }
+
+  rotateByAxisAngle(angle: number, axis: Array<number>): Quaternion {
     let sq = Math.sqrt(
       axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]
     )
@@ -126,45 +251,67 @@ export class Quaternion {
     return new Vector3(qpinvq.x, qpinvq.y, qpinvq.z)
   }
 
-  ToMat4x4(): Matrix4x4 {
-    let x = this.x
-    let y = this.y
-    let z = this.z
-    let w = this.w
+  ToMatrix3x3(): Matrix3x3 {
+    let _2xx = 2 * this.x * this.x
+    let _2yy = 2 * this.y * this.y
+    let _2zz = 2 * this.z * this.z
+    let _2xy = 2 * this.x * this.y
+    let _2xz = 2 * this.x * this.z
+    let _2xw = 2 * this.x * this.w
+    let _2yz = 2 * this.y * this.z
+    let _2yw = 2 * this.y * this.w
+    let _2zw = 2 * this.z * this.w
 
-    let x2 = x + x
-    let y2 = y + y
-    let z2 = z + z
-    let xx = x * x2
-    let xy = x * y2
-    let xz = x * z2
-    let yy = y * y2
-    let yz = y * z2
-    let zz = z * z2
-    let wx = w * x2
-    let wy = w * y2
-    let wz = w * z2
+    let data = new Array<number>(
+      1 - _2yy - _2zz,
+      _2xy - _2zw,
+      _2xz + _2yw,
+      _2xy + _2zw,
+      1 - _2zz - _2xx,
+      _2yz - _2xw,
+      _2xz - _2yw,
+      _2yz + _2xw,
+      1 - _2yy - _2xx
+    )
+    //console.log(data)
+    let m3 = new Matrix3x3(data)
 
-    let v16 = new Array<number>(16)
-    v16[0] = 1 - (yy + zz)
-    v16[1] = xy - wz
-    v16[2] = xz + wy
-    v16[3] = 0
-    v16[4] = xy + wz
-    v16[5] = 1 - (xx + zz)
-    v16[6] = yz - wx
-    v16[7] = 0
-    v16[8] = xz - wy
-    v16[9] = yz + wx
-    v16[10] = 1 - (xx + yy)
-    v16[11] = 0
-    v16[12] = 0
-    v16[13] = 0
-    v16[14] = 0
-    v16[15] = 1
+    return m3
+  }
 
-    let mat = new Matrix4x4(v16)
-    return mat
+  ToMatrix4x4(): Matrix4x4 {
+    let _2xx = 2 * this.x * this.x
+    let _2yy = 2 * this.y * this.y
+    let _2zz = 2 * this.z * this.z
+    let _2xy = 2 * this.x * this.y
+    let _2xz = 2 * this.x * this.z
+    let _2xw = 2 * this.x * this.w
+    let _2yz = 2 * this.y * this.z
+    let _2yw = 2 * this.y * this.w
+    let _2zw = 2 * this.z * this.w
+
+    let data = new Array<number>(
+      1 - _2yy - _2zz,
+      _2xy - _2zw,
+      _2xz + _2yw,
+      0,
+      _2xy + _2zw,
+      1 - _2zz - _2xx,
+      _2yz - _2xw,
+      0,
+      _2xz - _2yw,
+      _2yz + _2xw,
+      1 - _2yy - _2xx,
+      0,
+      0,
+      0,
+      0,
+      1
+    )
+
+    let m4 = new Matrix4x4(data)
+
+    return m4
   }
 
   slerp(qtn1: Quaternion, qtn2: Quaternion, time: number): Quaternion {
@@ -185,7 +332,7 @@ export class Quaternion {
       outq.w = qtn1.w
     } else {
       hs = Math.sqrt(hs)
-      if (Math.abs(hs) < 0.0001) {
+      if (Math.abs(hs) < TS_EPSILON) {
         outq.x = qtn1.x * 0.5 + qtn2.x * 0.5
         outq.y = qtn1.y * 0.5 + qtn2.y * 0.5
         outq.z = qtn1.z * 0.5 + qtn2.z * 0.5
@@ -202,5 +349,28 @@ export class Quaternion {
       }
     }
     return outq
+  }
+
+  l2Norm() {
+    return Math.sqrt(
+      this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w
+    )
+  }
+
+  normalize() {
+    let norm = this.l2Norm()
+
+    if (norm > 0) {
+      this.x /= norm
+      this.y /= norm
+      this.z /= norm
+      this.w /= norm
+    }
+  }
+
+  normalized(): Quaternion {
+    let q = new Quaternion(this.x, this.y, this.z, this.w)
+    q.normalize()
+    return q
   }
 }

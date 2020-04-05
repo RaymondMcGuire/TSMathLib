@@ -223,7 +223,7 @@ namespace EMathLib {
 
     spMat2Vec() {
       if (this.rows() != 1 && this.cols() != 1) {
-        console.log('can not convert to vector!')
+        console.log('sparse matrix can not convert to vector!')
         return undefined
       }
 

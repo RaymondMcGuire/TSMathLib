@@ -1,8 +1,11 @@
-/* =========================================================================
- *
- *  sparse_matrix.ts
- *  M*N dimention sparse matrix
- * ========================================================================= */
+/*
+ * @Author: Xu.Wang
+ * @Date: 2020-04-05 20:20:02
+ * @Last Modified by: Xu.Wang
+ * @Last Modified time: 2020-04-06 01:48:11
+ * @Description: M*N Dimention Sparse Matrix
+ */
+
 import { muldec } from './math_utils'
 import { Vector } from './vector'
 import { MatrixIndex, SparseMatrixData } from './interface'
@@ -159,7 +162,7 @@ export class SparseMatrix {
   }
 
   transpose() {
-    this.set(this._transpose())
+    return this._transpose()
   }
 
   mulMat(m: Matrix) {
@@ -220,7 +223,7 @@ export class SparseMatrix {
 
   spMat2Vec() {
     if (this.rows() !== 1 && this.cols() !== 1) {
-      console.log('can not convert to vector!')
+      console.log('sparse matrix can not convert to vector!')
       return new Vector(1, [-1])
     }
 

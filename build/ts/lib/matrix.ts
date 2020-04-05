@@ -170,7 +170,7 @@ namespace EMathLib {
 
     mat2Vec() {
       if (this.rows() != 1 && this.cols() != 1) {
-        console.log('can not convert to vector!')
+        console.log('matrix can not convert to vector!')
         return undefined
       }
 

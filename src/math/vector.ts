@@ -2,7 +2,7 @@
  * @Author: Xu.Wang
  * @Date: 2020-03-31 17:30:28
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-04-01 17:15:15
+ * @Last Modified time: 2020-04-05 22:59:12
  */
 
 import { absMax, absMin } from './math_utils'
@@ -51,16 +51,30 @@ export class Vector {
     return false
   }
 
+  private _fill(n: number) {
+    let values = new Array<number>(this._dimension)
+    values.fill(n)
+    return new Vector(this._dimension, values)
+  }
+
+  ones() {
+    return this._fill(1)
+  }
+
+  zeros() {
+    return this._fill(0)
+  }
+
   setZero() {
-    for (let _i = 0; _i < this._dimension; _i++) {
-      this._elements[_i] = 0
-    }
+    this._elements.fill(0)
   }
 
   setOne() {
-    for (let _i = 0; _i < this._dimension; _i++) {
-      this._elements[_i] = 1
-    }
+    this._elements.fill(1)
+  }
+
+  setValues(n: number) {
+    this._elements.fill(n)
   }
 
   data() {
@@ -319,6 +333,31 @@ export class Vector {
 
   imul(params?: any) {
     this.set(this.mul(params))
+  }
+    
+  rsub(params?: any) {
+    let _i = 0
+    if (typeof params === 'object') {
+      let v = params
+      if (v.size() !== this.size()) return new Vector(1, [-1])
+
+      let newV = new Vector(this.size(), v.data())
+      for (_i = 0; _i < newV.size(); _i++) {
+        newV.data()[_i] -= this.data()[_i]
+      }
+
+      return newV
+    } else if (typeof params === 'number') {
+      let s = params
+      let newV = new Vector(this.size(), this.data())
+      for (_i = 0; _i < newV.size(); _i++) {
+        newV.data()[_i] = s - newV.data()[_i]
+      }
+
+      return newV
+    }
+
+    return new Vector(1, [-1])
   }
 
   rdiv(params?: any) {

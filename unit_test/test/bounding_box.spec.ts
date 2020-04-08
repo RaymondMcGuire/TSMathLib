@@ -113,13 +113,13 @@ describe('BoundingBox', () => {
         it('Reset', () => {
             let bbox = new BoundingBox(new Vector3(-2.0, -2.0, 1.0), new Vector3(4.0, 3.0, 5.0));
             bbox.reset()
-            expect(bbox._lower.x()).to.equal(-Number.MAX_VALUE)
-            expect(bbox._lower.y()).to.equal(-Number.MAX_VALUE)
-            expect(bbox._lower.z()).to.equal(-Number.MAX_VALUE)
+            expect(bbox._lower.x()).to.equal(Number.MAX_VALUE)
+            expect(bbox._lower.y()).to.equal(Number.MAX_VALUE)
+            expect(bbox._lower.z()).to.equal(Number.MAX_VALUE)
    
-            expect(bbox._upper.x()).to.equal(Number.MAX_VALUE)
-            expect(bbox._upper.y()).to.equal(Number.MAX_VALUE)
-            expect(bbox._upper.z()).to.equal(Number.MAX_VALUE)
+            expect(bbox._upper.x()).to.equal(-Number.MAX_VALUE)
+            expect(bbox._upper.y()).to.equal(-Number.MAX_VALUE)
+            expect(bbox._upper.z()).to.equal(-Number.MAX_VALUE)
         })
 
         it('Merge With Point', () => {

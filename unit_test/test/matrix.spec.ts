@@ -3,6 +3,7 @@ import 'mocha'
 import { Vector } from '../../src/math/vector'
 import { Matrix } from '../../src/math/matrix'
 import { SparseMatrix } from '../../src/math/sparse_matrix'
+import { Matrix3x3, Vector3 } from '../../src/math'
 
 describe('Matrix', () => {
     it('init full zero matrix', () => {
@@ -170,6 +171,38 @@ describe('Matrix', () => {
             let v = new Vector(10, new Array(3, 4, 1, 4, 5, 6, 1, 2, 3, 4))
             let v1 = m.mulVec(v)
             expect(v1.data()).to.eql(new Array<number>(4, 1, 0))
+        })
+    })
+})
+
+describe('Matrix3x3', () => {
+
+    describe('Constructor', () => {
+        it('construct ray', () => {
+            let m3 = new Matrix3x3()
+            expect(m3.data()).to.deep.equal([1, 0, 0, 0, 1, 0, 0, 0, 1])
+            
+            m3 = new Matrix3x3([1, 2, 3, 4, 5, 6, 7, 8, 9])
+            expect(m3.data()).to.deep.equal([1, 2, 3, 4, 5, 6, 7, 8, 9])
+        })
+    })
+
+    describe('Method', () => {
+        it('identity', () => {
+            let m3 = new Matrix3x3([1, 2, 3, 4, 5, 6, 7, 8, 9])
+            let m4 = m3.identity()
+            expect(m3.data()).to.deep.equal([1, 2, 3, 4, 5, 6, 7, 8, 9])
+            expect(m4.data()).to.deep.equal([1, 0, 0, 0, 1, 0, 0, 0, 1])
+        })
+
+        it('multiply operation', () => {
+            let m3 = new Matrix3x3([9.0, -8.0, 7.0, -6.0, 5.0, -4.0, 3.0, -2.0, 1.0])
+            let vec = m3.mulV3(new Vector3(1, 2, 3))
+            expect(vec.data()).to.deep.equal([14.0, -8.0, 2.0])
+
+            let m4 = new Matrix3x3([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0])
+            let m5 = m3.mulMat(m4)
+            expect(m5.data()).to.deep.equal([26.0, 34.0, 42.0, -14.0, -19.0, -24.0, 2.0, 4.0, 6.0])
         })
     })
 })

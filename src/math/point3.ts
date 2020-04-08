@@ -2,31 +2,20 @@
  * @Author: Xu.Wang
  * @Date: 2020-03-31 16:11:26
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-03-31 18:59:25
+ * @Last Modified time: 2020-04-07 17:44:00
  */
+
+import { Vector3 } from './vector3'
+
 export class Point3 {
   x: number
   y: number
   z: number
 
-  constructor(_x?: number, _y?: number, _z?: number) {
-    if (_x === undefined) {
-      this.x = 0
-    } else {
-      this.x = _x
-    }
-
-    if (_y === undefined) {
-      this.y = 0
-    } else {
-      this.y = _y
-    }
-
-    if (_z === undefined) {
-      this.z = 0
-    } else {
-      this.z = _z
-    }
+  constructor(_x: number = 0, _y: number = 0, _z: number = 0) {
+    this.x = _x
+    this.y = _y
+    this.z = _z
   }
 
   clone(): Point3 {
@@ -44,5 +33,9 @@ export class Point3 {
 
   distanceTo(others: Point3) {
     return Math.sqrt(this.distanceSquaredTo(others))
+  }
+
+  toVector3(): Vector3 {
+    return new Vector3(this.x, this.y, this.z)
   }
 }

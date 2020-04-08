@@ -2,11 +2,12 @@
  * @Author: Xu.Wang
  * @Date: 2020-03-31 17:30:28
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-04-05 22:59:12
+ * @Last Modified time: 2020-04-07 18:32:57
  */
 
 import { absMax, absMin } from './math_utils'
 import { VectorData } from './interface'
+import { TS_EPSILON } from './math_constants'
 
 /**
  * Vector
@@ -207,7 +208,7 @@ export class Vector {
     return true
   }
 
-  isSimilar(others: Vector | undefined, epsilon: number) {
+  isSimilar(others: Vector | undefined, epsilon: number = TS_EPSILON) {
     if (others === undefined) return false
     if (this.size() !== others.size()) return false
 
@@ -334,7 +335,7 @@ export class Vector {
   imul(params?: any) {
     this.set(this.mul(params))
   }
-    
+
   rsub(params?: any) {
     let _i = 0
     if (typeof params === 'object') {

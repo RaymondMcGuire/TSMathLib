@@ -2,7 +2,7 @@
  * @Author: Xu.Wang
  * @Date: 2020-04-02 23:43:14
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-04-04 01:07:51
+ * @Last Modified time: 2020-04-08 23:10:58
  */
 import { Vector3 } from '../math/vector3'
 import { PointNeighborSearcher } from '../search/point_neighbor_searcher'
@@ -12,9 +12,9 @@ import { Point3 } from '../math/point3'
 export class ParticleSystemData {
   private DEFAULT_HASH_GRID_RESOLUTION: Point3 = new Point3(64, 64, 64)
 
-  private _radius: number = 1e-3
-  private _mass: number = 1e-3
-  private _size: number = 0
+  private _radius: number
+  private _mass: number
+  private _size: number
 
   private _positionIdx: number
   private _velocityIdx: number
@@ -26,11 +26,16 @@ export class ParticleSystemData {
   private _neighborSearcher: PointNeighborSearcher
   private _neighborLists: Array<Array<number>>
 
-  constructor(num: number) {
+  constructor(radius: number = 1e-3, mass: number = 1e-3, size: number = 0) {
+    // init param
+    this._radius = radius
+    this._mass = mass
+    this._size = size
+
     // init data lists
     this._scalarDataList = new Array<Array<number>>()
     this._vectorDataList = new Array<Array<Vector3>>()
-    this.resizeNumOfParticles(num)
+    this.resizeNumOfParticles(size)
 
     // add basic data types
     this._positionIdx = this.addVectorData()
@@ -132,6 +137,7 @@ export class ParticleSystemData {
     let attrIdx = this._vectorDataList.length
     let vecList = new Array<Vector3>(this.numberOfParticles())
     vecList.fill(vec)
+    this._vectorDataList.push(vecList)
     return attrIdx
   }
 

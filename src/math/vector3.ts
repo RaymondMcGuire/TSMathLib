@@ -2,12 +2,13 @@
  * @Author: Xu.Wang
  * @Date: 2020-04-05 20:58:08
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-04-05 23:47:02
+ * @Last Modified time: 2020-04-07 17:39:36
  */
 import { Vector } from './vector'
+import { Point3 } from './point3'
 
 export class Vector3 extends Vector {
-  constructor(e1: number, e2: number, e3: number) {
+  constructor(e1: number = 0, e2: number = 0, e3: number = 0) {
     super(3, new Array<number>(e1, e2, e3))
   }
 
@@ -112,5 +113,9 @@ export class Vector3 extends Vector {
 
     let b = this.cross(a)
     return [a, b]
+  }
+
+  toPoint() {
+    return new Point3(this.x(), this.y(), this.z())
   }
 }

@@ -2,7 +2,7 @@
  * @Author: Xu.Wang
  * @Date: 2020-04-05 23:25:54
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-04-06 01:58:28
+ * @Last Modified time: 2020-04-07 16:41:43
  * @Description  q = w + xi + yj + zk
  *  q_v = (q_x,q_y,q_z) = iq_x+jq_y+kq_z
  *  \hat{q} = (q_v,q_w) = q_v + q_w = iq_x+jq_y+kq_z+q_w
@@ -273,7 +273,7 @@ export class Quaternion {
       _2yz + _2xw,
       1 - _2yy - _2xx
     )
-    //console.log(data)
+    // console.log(data)
     let m3 = new Matrix3x3(data)
 
     return m3
@@ -372,5 +372,10 @@ export class Quaternion {
     let q = new Quaternion(this.x, this.y, this.z, this.w)
     q.normalize()
     return q
+  }
+
+  printQuaternion() {
+    let str = 'x:' + this.x + ',y:' + this.y + ',z:' + this.z + ',w:' + this.w
+    console.log(str)
   }
 }

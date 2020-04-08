@@ -2,7 +2,7 @@
  * @Author: Xu.Wang
  * @Date: 2020-04-01 16:53:50
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-04-01 19:43:43
+ * @Last Modified time: 2020-04-07 17:05:56
  */
 import { swap, clampV3 } from '../math/math_utils'
 import { Ray } from './ray'
@@ -18,17 +18,30 @@ export class BoundingBox {
    * @param p1
    * @param p2
    */
-  constructor(p1: Vector3, p2: Vector3) {
-    this._lower = new Vector3(
-      Math.min(p1.x(), p2.x()),
-      Math.min(p1.y(), p2.y()),
-      Math.min(p1.z(), p2.z())
-    )
-    this._upper = new Vector3(
-      Math.max(p1.x(), p2.x()),
-      Math.max(p1.y(), p2.y()),
-      Math.max(p1.z(), p2.z())
-    )
+  constructor(p1?: Vector3, p2?: Vector3) {
+    if (p1 === undefined || p2 === undefined) {
+      this._lower = new Vector3(
+        Number.MAX_VALUE,
+        Number.MAX_VALUE,
+        Number.MAX_VALUE
+      )
+      this._upper = new Vector3(
+        -Number.MAX_VALUE,
+        -Number.MAX_VALUE,
+        -Number.MAX_VALUE
+      )
+    } else {
+      this._lower = new Vector3(
+        Math.min(p1.x(), p2.x()),
+        Math.min(p1.y(), p2.y()),
+        Math.min(p1.z(), p2.z())
+      )
+      this._upper = new Vector3(
+        Math.max(p1.x(), p2.x()),
+        Math.max(p1.y(), p2.y()),
+        Math.max(p1.z(), p2.z())
+      )
+    }
   }
 
   // Getter Method
@@ -132,14 +145,14 @@ export class BoundingBox {
   // Setter Method
   reset() {
     this._lower = new Vector3(
-      -Number.MAX_VALUE,
-      -Number.MAX_VALUE,
-      -Number.MAX_VALUE
-    )
-    this._upper = new Vector3(
       Number.MAX_VALUE,
       Number.MAX_VALUE,
       Number.MAX_VALUE
+    )
+    this._upper = new Vector3(
+      -Number.MAX_VALUE,
+      -Number.MAX_VALUE,
+      -Number.MAX_VALUE
     )
   }
 

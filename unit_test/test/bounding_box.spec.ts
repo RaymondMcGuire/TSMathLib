@@ -11,13 +11,13 @@ describe('BoundingBox', () => {
         it('construct bbox by two points', () => {
             let bbox = new BoundingBox(new Vector3(-2.0, 3.0, 5.0), new Vector3(4.0, -2.0, 1.0))
             
-            expect(bbox._lower.x()).to.equal(-2.0)
-            expect(bbox._lower.y()).to.equal(-2.0)
-            expect(bbox._lower.z()).to.equal(1.0)
+            expect(bbox.lower().x()).to.equal(-2.0)
+            expect(bbox.lower().y()).to.equal(-2.0)
+            expect(bbox.lower().z()).to.equal(1.0)
    
-            expect(bbox._upper.x()).to.equal(4.0)
-            expect(bbox._upper.y()).to.equal(3.0)
-            expect(bbox._upper.z()).to.equal(5.0)
+            expect(bbox.upper().x()).to.equal(4.0)
+            expect(bbox.upper().y()).to.equal(3.0)
+            expect(bbox.upper().z()).to.equal(5.0)
         })
     })
 
@@ -64,13 +64,13 @@ describe('BoundingBox', () => {
             let bbox_epty = new BoundingBox(new Vector3(-2.0, -2.0, 1.0), new Vector3(4.0, 3.0, 5.0))
             expect(bbox_epty.isEmpty()).to.false
 
-            bbox_epty._lower = new Vector3(5.0, 1.0, 3.0)
+            bbox_epty.setLower(new Vector3(5.0, 1.0, 3.0))
             expect(bbox_epty.isEmpty()).to.true
-            bbox_epty._lower = new Vector3(2.0, 4.0, 3.0)
+            bbox_epty.setLower(new Vector3(2.0, 4.0, 3.0))
             expect(bbox_epty.isEmpty()).to.true
-            bbox_epty._lower = new Vector3(2.0, 1.0, 6.0)
+            bbox_epty.setLower(new Vector3(2.0, 1.0, 6.0))
             expect(bbox_epty.isEmpty()).to.true
-            bbox_epty._lower = new Vector3(4.0, 1.0, 3.0)
+            bbox_epty.setLower(new Vector3(4.0, 1.0, 3.0))
             expect(bbox_epty.isEmpty()).to.true
         })
         
@@ -113,13 +113,13 @@ describe('BoundingBox', () => {
         it('Reset', () => {
             let bbox = new BoundingBox(new Vector3(-2.0, -2.0, 1.0), new Vector3(4.0, 3.0, 5.0));
             bbox.reset()
-            expect(bbox._lower.x()).to.equal(Number.MAX_VALUE)
-            expect(bbox._lower.y()).to.equal(Number.MAX_VALUE)
-            expect(bbox._lower.z()).to.equal(Number.MAX_VALUE)
+            expect(bbox.lower().x()).to.equal(Number.MAX_VALUE)
+            expect(bbox.lower().y()).to.equal(Number.MAX_VALUE)
+            expect(bbox.lower().z()).to.equal(Number.MAX_VALUE)
    
-            expect(bbox._upper.x()).to.equal(-Number.MAX_VALUE)
-            expect(bbox._upper.y()).to.equal(-Number.MAX_VALUE)
-            expect(bbox._upper.z()).to.equal(-Number.MAX_VALUE)
+            expect(bbox.upper().x()).to.equal(-Number.MAX_VALUE)
+            expect(bbox.upper().y()).to.equal(-Number.MAX_VALUE)
+            expect(bbox.upper().z()).to.equal(-Number.MAX_VALUE)
         })
 
         it('Merge With Point', () => {
@@ -127,13 +127,13 @@ describe('BoundingBox', () => {
             let p = new Point3(5.0, 1.0, -1.0)
             bbox.mergeWithPoint(p)
 
-            expect(bbox._lower.x()).to.equal(-2.0)
-            expect(bbox._lower.y()).to.equal(-2.0)
-            expect(bbox._lower.z()).to.equal(-1.0)
+            expect(bbox.lower().x()).to.equal(-2.0)
+            expect(bbox.lower().y()).to.equal(-2.0)
+            expect(bbox.lower().z()).to.equal(-1.0)
    
-            expect(bbox._upper.x()).to.equal(5.0)
-            expect(bbox._upper.y()).to.equal(3.0)
-            expect(bbox._upper.z()).to.equal(5.0)
+            expect(bbox.upper().x()).to.equal(5.0)
+            expect(bbox.upper().y()).to.equal(3.0)
+            expect(bbox.upper().z()).to.equal(5.0)
         })
 
         it('Merge With Bbox', () => {
@@ -141,26 +141,26 @@ describe('BoundingBox', () => {
             let bbox1 = new BoundingBox(new Vector3(3.0, 1.0, 3.0), new Vector3(8.0, 2.0, 7.0));
             bbox.mergeWithBbox(bbox1)
 
-            expect(bbox._lower.x()).to.equal(-2.0)
-            expect(bbox._lower.y()).to.equal(-2.0)
-            expect(bbox._lower.z()).to.equal(1.0)
+            expect(bbox.lower().x()).to.equal(-2.0)
+            expect(bbox.lower().y()).to.equal(-2.0)
+            expect(bbox.lower().z()).to.equal(1.0)
    
-            expect(bbox._upper.x()).to.equal(8.0)
-            expect(bbox._upper.y()).to.equal(3.0)
-            expect(bbox._upper.z()).to.equal(7.0)
+            expect(bbox.upper().x()).to.equal(8.0)
+            expect(bbox.upper().y()).to.equal(3.0)
+            expect(bbox.upper().z()).to.equal(7.0)
         })
 
         it('Expand', () => {
             let bbox = new BoundingBox(new Vector3(-2.0, -2.0, 1.0), new Vector3(4.0, 3.0, 5.0));
             bbox.expand(3.0)
 
-            expect(bbox._lower.x()).to.equal(-5.0)
-            expect(bbox._lower.y()).to.equal(-5.0)
-            expect(bbox._lower.z()).to.equal(-2.0)
+            expect(bbox.lower().x()).to.equal(-5.0)
+            expect(bbox.lower().y()).to.equal(-5.0)
+            expect(bbox.lower().z()).to.equal(-2.0)
    
-            expect(bbox._upper.x()).to.equal(7.0)
-            expect(bbox._upper.y()).to.equal(6.0)
-            expect(bbox._upper.z()).to.equal(8.0)
+            expect(bbox.upper().x()).to.equal(7.0)
+            expect(bbox.upper().y()).to.equal(6.0)
+            expect(bbox.upper().z()).to.equal(8.0)
         })
     })
 

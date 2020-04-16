@@ -53,22 +53,22 @@ describe('Transform', () => {
 
             let bbox = new BoundingBox(new Vector3(-2,-1,-3),new Vector3(2,1,3))
             let r5 = t.toWorldByBbox(bbox);
-            expect(isSimilar(r5._lower.x(),-1.0,TS_HALF_EPSILON)).to.true
-            expect(isSimilar(r5._lower.y(),-6.0,TS_HALF_EPSILON)).to.true
-            expect(isSimilar(r5._lower.z(), -1.0, TS_HALF_EPSILON)).to.true
+            expect(isSimilar(r5.lower().x(),-1.0,TS_HALF_EPSILON)).to.true
+            expect(isSimilar(r5.lower().y(),-6.0,TS_HALF_EPSILON)).to.true
+            expect(isSimilar(r5.lower().z(), -1.0, TS_HALF_EPSILON)).to.true
             
-            expect(isSimilar(r5._upper.x(),5.0,TS_HALF_EPSILON)).to.true
-            expect(isSimilar(r5._upper.y(),-4.0,TS_HALF_EPSILON)).to.true
-            expect(isSimilar(r5._upper.z(),3.0,TS_HALF_EPSILON)).to.true
+            expect(isSimilar(r5.upper().x(),5.0,TS_HALF_EPSILON)).to.true
+            expect(isSimilar(r5.upper().y(),-4.0,TS_HALF_EPSILON)).to.true
+            expect(isSimilar(r5.upper().z(),3.0,TS_HALF_EPSILON)).to.true
             
             let r6 = t.toLocalByBbox(r5)
-            expect(isSimilar(r6._lower.x(),-2.0,TS_HALF_EPSILON)).to.true
-            expect(isSimilar(r6._lower.y(),-1.0,TS_HALF_EPSILON)).to.true
-            expect(isSimilar(r6._lower.z(), -3.0, TS_HALF_EPSILON)).to.true
+            expect(isSimilar(r6.lower().x(),-2.0,TS_HALF_EPSILON)).to.true
+            expect(isSimilar(r6.lower().y(),-1.0,TS_HALF_EPSILON)).to.true
+            expect(isSimilar(r6.lower().z(), -3.0, TS_HALF_EPSILON)).to.true
             
-            expect(isSimilar(r6._upper.x(),2.0,TS_HALF_EPSILON)).to.true
-            expect(isSimilar(r6._upper.y(),1.0,TS_HALF_EPSILON)).to.true
-            expect(isSimilar(r6._upper.z(),3.0,TS_HALF_EPSILON)).to.true  
+            expect(isSimilar(r6.upper().x(),2.0,TS_HALF_EPSILON)).to.true
+            expect(isSimilar(r6.upper().y(),1.0,TS_HALF_EPSILON)).to.true
+            expect(isSimilar(r6.upper().z(),3.0,TS_HALF_EPSILON)).to.true  
         })
         
     

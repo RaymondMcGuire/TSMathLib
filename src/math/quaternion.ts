@@ -2,7 +2,7 @@
  * @Author: Xu.Wang
  * @Date: 2020-04-05 23:25:54
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-04-07 16:41:43
+ * @Last Modified time: 2020-04-15 23:50:46
  * @Description  q = w + xi + yj + zk
  *  q_v = (q_x,q_y,q_z) = iq_x+jq_y+kq_z
  *  \hat{q} = (q_v,q_w) = q_v + q_w = iq_x+jq_y+kq_z+q_w
@@ -20,24 +20,11 @@ export class Quaternion {
   y: number
   z: number
   w: number
-  constructor(_x?: number, _y?: number, _z?: number, _w?: number) {
-    if (
-      _x !== undefined &&
-      _y !== undefined &&
-      _z !== undefined &&
-      _w !== undefined
-    ) {
-      this.x = _x
-      this.y = _y
-      this.z = _z
-      this.w = _w
-    } else {
-      let q = this.identity()
-      this.x = q.x
-      this.y = q.y
-      this.z = q.z
-      this.w = q.w
-    }
+  constructor(_x: number = 0, _y: number = 0, _z: number = 0, _w: number = 1) {
+    this.x = _x
+    this.y = _y
+    this.z = _z
+    this.w = _w
   }
 
   set(x: number, y: number, z: number, w: number) {

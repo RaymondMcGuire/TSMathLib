@@ -1,8 +1,8 @@
 /*
  * @Author: Xu.Wang
  * @Date: 2020-04-07 18:38:41
- * @Last Modified by:   Xu.Wang
- * @Last Modified time: 2020-04-07 18:38:41
+ * @Last Modified by: Xu.Wang
+ * @Last Modified time: 2020-04-16 00:22:17
  */
 import { Surface, SurfaceRayIntersection3 } from './surface'
 import { Transform } from './transform'
@@ -11,14 +11,25 @@ import { Ray } from './ray'
 import { BoundingBox } from './bounding_box'
 
 export class PhysicsPlane extends Surface {
-  _point: Vector3 = new Vector3()
-  _normal: Vector3 = new Vector3()
+  private _point: Vector3
+  private _normal: Vector3
 
   constructor(
+    normal: Vector3 = new Vector3(),
+    point: Vector3 = new Vector3(),
     transform: Transform = new Transform(),
     isNormalFlipped: boolean = false
   ) {
     super(transform, isNormalFlipped)
+    this._normal = normal
+    this._point = point
+  }
+
+  point(): Vector3 {
+    return this._point
+  }
+  normal(): Vector3 {
+    return this._normal
   }
 
   setByPointWithNormal(point: Vector3, normal: Vector3) {

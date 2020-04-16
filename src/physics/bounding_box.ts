@@ -2,7 +2,7 @@
  * @Author: Xu.Wang
  * @Date: 2020-04-01 16:53:50
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-04-07 17:05:56
+ * @Last Modified time: 2020-04-15 22:59:04
  */
 import { swap, clampV3 } from '../math/math_utils'
 import { Ray } from './ray'
@@ -10,8 +10,8 @@ import { Vector3 } from '../math/vector3'
 import { Point3 } from '../math/point3'
 
 export class BoundingBox {
-  _lower: Vector3
-  _upper: Vector3
+  private _lower: Vector3
+  private _upper: Vector3
 
   /**
    * Creates an instance of bounding box.
@@ -44,45 +44,61 @@ export class BoundingBox {
     }
   }
 
+  lower(): Vector3 {
+    return this._lower
+  }
+
+  setLower(l: Vector3) {
+    this._lower = l
+  }
+
+  setUpper(u: Vector3) {
+    this._upper = u
+  }
+
+  upper(): Vector3 {
+    return this._upper
+  }
+
   // Getter Method
   width(): number {
-    return this._upper.x() - this._lower.x()
+    return this.upper().x() - this.lower().x()
   }
 
   height(): number {
-    return this._upper.y() - this._lower.y()
+    return this.upper().y() - this.lower().y()
   }
 
   depth(): number {
-    return this._upper.z() - this._lower.z()
+    return this.upper().z() - this.lower().z()
   }
 
   length(axis: number): number {
-    return this._upper.data()[axis] - this._lower.data()[axis]
+    return this.upper().data()[axis] - this.lower().data()[axis]
   }
 
   midPoint(): Vector3 {
-    return this._upper.add(this._lower).div(2)
+    return this.upper().add(this.lower()).div(2)
   }
 
   diagonalLength(): number {
-    return this._upper.sub(this._lower).length()
+    return this.upper().sub(this.lower()).length()
   }
 
   diagonalLengthSquared(): number {
-    return this._upper.sub(this._lower).lengthSquared()
+    return this.upper().sub(this.lower()).lengthSquared()
   }
 
   contains(point: Vector3): boolean {
-    if (this._upper.x() < point.x() || this._lower.x() > point.x()) {
+    if (this.upper().x() < point.x() || this.lower().x() > point.x()) {
       return false
     }
 
-    if (this._upper.y() < point.y() || this._lower.y() > point.y()) {
+    if (this.upper().y() < point.y() || this.lower().y() > point.y()) {
       return false
     }
 
-    if (this._upper.z() < point.z() || this._lower.z() > point.z()) {
+    if (this.upper().z() < point.z() || this.lower().z() > point.z()) {
       return false
     }
 
@@ -91,22 +107,22 @@ export class BoundingBox {
 
   overlaps(other: BoundingBox): boolean {
     if (
-      this._upper.x() < other._lower.x() ||
-      this._lower.x() > other._upper.x()
+      this.upper().x() < other.lower().x() ||
+      this.lower().x() > other.upper().x()
     ) {
       return false
     }
 
     if (
-      this._upper.y() < other._lower.y() ||
-      this._lower.y() > other._upper.y()
+      this.upper().y() < other.lower().y() ||
+      this.lower().y() > other.upper().y()
     ) {
       return false
     }
 
     if (
-      this._upper.y() < other._lower.z() ||
-      this._lower.z() > other._upper.y()
+      this.upper().y() < other.lower().z() ||
+      this.lower().z() > other.upper().y()
     ) {
       return false
     }
@@ -131,14 +147,14 @@ export class BoundingBox {
   }
 
   clamp(val: Vector3): Vector3 {
-    return clampV3(val, this._lower, this._upper)
+    return clampV3(val, this.lower(), this.upper())
   }
 
   isEmpty(): boolean {
     return (
-      this._lower.x() >= this._upper.x() ||
-      this._lower.y() >= this._upper.y() ||
-      this._lower.z() >= this._upper.z()
+      this.lower().x() >= this.upper().x() ||
+      this.lower().y() >= this.upper().y() ||
+      this.lower().z() >= this.upper().z()
     )
   }
 
@@ -158,33 +174,33 @@ export class BoundingBox {
 
   mergeWithBbox(bbox: BoundingBox) {
     this._lower = new Vector3(
-      Math.min(this._lower.x(), bbox._lower.x()),
-      Math.min(this._lower.y(), bbox._lower.y()),
-      Math.min(this._lower.z(), bbox._lower.z())
+      Math.min(this.lower().x(), bbox.lower().x()),
+      Math.min(this.lower().y(), bbox.lower().y()),
+      Math.min(this.lower().z(), bbox.lower().z())
     )
     this._upper = new Vector3(
-      Math.max(this._upper.x(), bbox._upper.x()),
-      Math.max(this._upper.y(), bbox._upper.y()),
-      Math.max(this._upper.z(), bbox._upper.z())
+      Math.max(this.upper().x(), bbox.upper().x()),
+      Math.max(this.upper().y(), bbox.upper().y()),
+      Math.max(this.upper().z(), bbox.upper().z())
     )
   }
 
   mergeWithPoint(point: Point3) {
     this._lower = new Vector3(
-      Math.min(this._lower.x(), point.x),
-      Math.min(this._lower.y(), point.y),
-      Math.min(this._lower.z(), point.z)
+      Math.min(this.lower().x(), point.x),
+      Math.min(this.lower().y(), point.y),
+      Math.min(this.lower().z(), point.z)
     )
     this._upper = new Vector3(
-      Math.max(this._upper.x(), point.x),
-      Math.max(this._upper.y(), point.y),
-      Math.max(this._upper.z(), point.z)
+      Math.max(this.upper().x(), point.x),
+      Math.max(this.upper().y(), point.y),
+      Math.max(this.upper().z(), point.z)
     )
   }
 
   expand(delta: number) {
-    this._lower.isub(delta)
-    this._upper.iadd(delta)
+    this.lower().isub(delta)
+    this.upper().iadd(delta)
   }
 
   // Intersection Method
@@ -195,9 +211,9 @@ export class BoundingBox {
 
     for (let i = 0; i < 3; ++i) {
       let tNear =
-        (this._lower.data()[i] - ray.origin.data()[i]) * rayInvDir.data()[i]
+        (this.lower().data()[i] - ray.origin.data()[i]) * rayInvDir.data()[i]
       let tFar =
-        (this._upper.data()[i] - ray.origin.data()[i]) * rayInvDir.data()[i]
+        (this.upper().data()[i] - ray.origin.data()[i]) * rayInvDir.data()[i]
       if (tNear > tFar) {
         let val = swap(tNear, tFar)
         tNear = val[0]
@@ -223,9 +239,9 @@ export class BoundingBox {
 
     for (let i = 0; i < 3; ++i) {
       let tNear =
-        (this._lower.data()[i] - ray.origin.data()[i]) * rayInvDir.data()[i]
+        (this.lower().data()[i] - ray.origin.data()[i]) * rayInvDir.data()[i]
       let tFar =
-        (this._upper.data()[i] - ray.origin.data()[i]) * rayInvDir.data()[i]
+        (this.upper().data()[i] - ray.origin.data()[i]) * rayInvDir.data()[i]
 
       if (tNear > tFar) {
         let val = swap(tNear, tFar)

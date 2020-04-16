@@ -2,12 +2,13 @@
  * @Author: Xu.Wang
  * @Date: 2020-03-31 15:38:47
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-03-31 19:01:59
+ * @Last Modified time: 2020-04-16 18:42:40
  */
 
 import { Vector3 } from '../math/vector3'
 import { Point3 } from '../math/point3'
 import { PointNeighborSearcher } from './point_neighbor_searcher'
+import { LOG } from '../log/log'
 
 export class PointHashGridSearcher extends PointNeighborSearcher {
   _name = 'PointHashGridSearcher'
@@ -20,6 +21,12 @@ export class PointHashGridSearcher extends PointNeighborSearcher {
     super()
     this._gridSpacing = gridSpacing
     this._resolution = resolution
+    LOG.LOGGER(
+      'init PointHashGridSearcher : gridSpacing=' +
+        gridSpacing +
+        ',resolution=' +
+        resolution.debug()
+    )
   }
 
   build(points: Array<Vector3>) {

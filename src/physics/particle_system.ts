@@ -2,7 +2,7 @@
  * @Author: Xu.Wang
  * @Date: 2020-04-03 18:18:27
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-04-08 23:20:01
+ * @Last Modified time: 2020-04-16 18:37:59
  */
 import { ParticleSystemData } from './particle_system_data'
 import { Vector3 } from '../math/vector3'
@@ -10,11 +10,14 @@ import { PHY_GRAVITY } from './physics_constants'
 import { clamp } from '../math/math_utils'
 import { ConstantVectorField } from '../math/vector_field'
 import { PhysicsAnimation } from './physics_animation'
+import { Collider } from './collider'
 
 export class ParticleSystem extends PhysicsAnimation {
   _dragCoefficient: number = 1e-4
   _restitutionCoefficient: number = 0.0
   _gravity: Vector3 = new Vector3(0.0, PHY_GRAVITY, 0.0)
+
+  _collider?: Collider
 
   _wind: ConstantVectorField
 
@@ -26,7 +29,6 @@ export class ParticleSystem extends PhysicsAnimation {
   constructor(
     radius: number = 1e-3,
     mass: number = 1e-3,
-    size: number = 0,
     isUsingSubTimeSteps: boolean = false,
     isUsingFixedSubTimeSteps: boolean = false,
     numberOfFixedSubTimeSteps: number = 1
@@ -36,8 +38,41 @@ export class ParticleSystem extends PhysicsAnimation {
       isUsingFixedSubTimeSteps,
       numberOfFixedSubTimeSteps
     )
-    this._particleSystemData = new ParticleSystemData(radius, mass, size)
+    this._particleSystemData = new ParticleSystemData(radius, mass)
     this._wind = new ConstantVectorField(new Vector3(0.0, 0.0, 0.0))
+  }
+
+  collider() {
+    return this._collider
+  }
+
+  setCollider(newCollider: Collider) {
+    this._collider = newCollider
+  }
+
+  updateCollider(timeStepInSeconds: number) {
+    if (this._collider !== undefined) {
+      this._collider.update(timeStepInSeconds)
+    }
+  }
+
+  resolveCollision() {
+    if (this._collider !== undefined) {
+      let numberOfParticles = this._particleSystemData.numberOfParticles()
+      let radius = this._particleSystemData.particleRadius()
+
+      for (let idx = 0; idx < numberOfParticles; idx++) {
+        let result = this._collider.resolveCollision(
+          radius,
+          this._restitutionCoefficient,
+          this._newPositions[idx],
+          this._newVelocities[idx]
+        )
+
+        this._newPositions[idx] = result.position
+        this._newVelocities[idx] = result.velocity
+      }
+    }
   }
 
   setParticleSystemData(newParticles: ParticleSystemData) {
@@ -76,7 +111,7 @@ export class ParticleSystem extends PhysicsAnimation {
     let forces = this._particleSystemData.forces()
     let velocities = this._particleSystemData.velocities()
     let positions = this._particleSystemData.positions()
-    let mass = this._particleSystemData.mass()
+    let mass = this._particleSystemData.particleMass()
     for (let idx = 0; idx < n; idx++) {
       let forceGravity = this._gravity.mul(mass)
       let forceWind = velocities[idx].sub(this._wind.sample(positions[idx]))
@@ -90,7 +125,7 @@ export class ParticleSystem extends PhysicsAnimation {
     let forces = this._particleSystemData.forces()
     let velocities = this._particleSystemData.velocities()
     let positions = this._particleSystemData.positions()
-    let mass = this._particleSystemData.mass()
+    let mass = this._particleSystemData.particleMass()
 
     for (let i = 0; i < n; i++) {
       // Integrate velocity first
@@ -125,7 +160,7 @@ export class ParticleSystem extends PhysicsAnimation {
 
     this.timeIntegration(timeStepInSeconds)
 
-    // resolveCollision();
+    this.resolveCollision()
 
     this.endAdvanceTimeStep(timeStepInSeconds)
   }
@@ -136,7 +171,7 @@ export class ParticleSystem extends PhysicsAnimation {
     forces.fill(new Vector3())
 
     // Update collider and emitter
-    // updateCollider(timeStepInSeconds);
+    this.updateCollider(timeStepInSeconds)
     // updateEmitter(timeStepInSeconds);
 
     // Allocate buffers

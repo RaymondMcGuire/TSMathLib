@@ -2,7 +2,7 @@
  * @Author: Xu.Wang
  * @Date: 2020-03-31 16:11:26
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-04-07 17:44:00
+ * @Last Modified time: 2020-04-16 18:42:22
  */
 
 import { Vector3 } from './vector3'
@@ -37,5 +37,9 @@ export class Point3 {
 
   toVector3(): Vector3 {
     return new Vector3(this.x, this.y, this.z)
+  }
+
+  debug(): string {
+    return '[' + this.x + ',' + this.y + ',' + this.z + ']'
   }
 }

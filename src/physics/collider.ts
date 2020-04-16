@@ -71,11 +71,17 @@ export abstract class Collider {
     velocity: Vector3
   ) {
     if (!this._surface.isValidGeometry()) {
-      return
+      return { position: new Vector3(), velocity: new Vector3() }
     }
 
     let colliderPoint = this.getClosestPoint(this._surface, position)
 
+    // console.log(
+    //   'isPenetrating:',
+    //   this.isPenetrating(colliderPoint, position, radius)
+    // )
+
+    // console.log('_frictionCoeffient:', this._frictionCoeffient)
     // Check if the new position is penetrating the surface
     if (this.isPenetrating(colliderPoint, position, radius)) {
       // Target point is the closest non-penetrating position from the
@@ -119,6 +125,8 @@ export abstract class Collider {
       // Geometric fix
       position = targetPoint
     }
+
+    return { position: position, velocity: velocity }
   }
 
   frictionCoefficient(): number {
@@ -127,5 +135,9 @@ export abstract class Collider {
 
   setFrictionCoefficient(newFrictionCoeffient: number) {
     this._frictionCoeffient = Math.max(newFrictionCoeffient, 0.0)
+  }
+
+  update(_: number) {
+    // call func
   }
 }

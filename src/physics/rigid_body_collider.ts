@@ -10,19 +10,34 @@ import { Surface } from './surface'
 
 export class RigidBodyCollider extends Collider {
   // ! Linear velocity of the rigid body.
-  _linearVelocity: Vector3
+  private _linearVelocity: Vector3
 
   // ! Angular velocity of the rigid body.
-  _angularVelocity: Vector3
+  private _angularVelocity: Vector3
 
   constructor(
     surface: Surface,
-    linearVelocity: Vector3,
-    angularVelocity: Vector3
+    linearVelocity: Vector3 = new Vector3(),
+    angularVelocity: Vector3 = new Vector3()
   ) {
     super(surface)
     this._linearVelocity = linearVelocity
     this._angularVelocity = angularVelocity
+  }
+
+  linearVelocity() {
+    return this._linearVelocity
+  }
+  angularVelocity() {
+    return this._angularVelocity
+  }
+
+  setLinearVelocity(v: Vector3) {
+    this._linearVelocity = v
+  }
+
+  setAngularVelocity(v: Vector3) {
+    this._angularVelocity = v
   }
 
   velocityAt(point: Vector3): Vector3 {

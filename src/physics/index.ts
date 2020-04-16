@@ -14,3 +14,4 @@ export * from './physics_utils'
 
 export * from './physics_plane'
 export * from './physics_sphere'
+export * from './physics_box'

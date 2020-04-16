@@ -2,19 +2,20 @@
  * @Author: Xu.Wang
  * @Date: 2020-04-02 23:43:14
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-04-08 23:10:58
+ * @Last Modified time: 2020-04-16 18:37:01
  */
 import { Vector3 } from '../math/vector3'
 import { PointNeighborSearcher } from '../search/point_neighbor_searcher'
 import { PointHashGridSearcher } from '../search/point_hash_grid_searcher'
 import { Point3 } from '../math/point3'
+import { LOG } from '../log/log'
 
 export class ParticleSystemData {
   private DEFAULT_HASH_GRID_RESOLUTION: Point3 = new Point3(64, 64, 64)
 
-  private _radius: number
-  private _mass: number
-  private _size: number
+  private _particleRadius: number
+  private _particleMass: number
+  private _particleSize: number
 
   private _positionIdx: number
   private _velocityIdx: number
@@ -26,16 +27,21 @@ export class ParticleSystemData {
   private _neighborSearcher: PointNeighborSearcher
   private _neighborLists: Array<Array<number>>
 
-  constructor(radius: number = 1e-3, mass: number = 1e-3, size: number = 0) {
-    // init param
-    this._radius = radius
-    this._mass = mass
-    this._size = size
+  constructor(particleRadius: number = 1e-3, particleMass: number = 1e-3) {
+    LOG.LOGGER(
+      'init ParticleSystemData: particleRadius=' +
+        particleRadius +
+        ',particleMass=' +
+        particleMass
+    )
+    // init particles params & particle number is zero
+    this._particleRadius = particleRadius
+    this._particleMass = particleMass
+    this._particleSize = 0
 
     // init data lists
     this._scalarDataList = new Array<Array<number>>()
     this._vectorDataList = new Array<Array<Vector3>>()
-    this.resizeNumOfParticles(size)
 
     // add basic data types
     this._positionIdx = this.addVectorData()
@@ -44,7 +50,7 @@ export class ParticleSystemData {
 
     // set neighbor searcher
     this._neighborSearcher = new PointHashGridSearcher(
-      2.0 * this._radius,
+      2.0 * this._particleRadius,
       this.DEFAULT_HASH_GRID_RESOLUTION
     )
 
@@ -151,37 +157,41 @@ export class ParticleSystemData {
 
   // Setter Method
 
-  setRadius(newRadius: number) {
-    this._radius = Math.max(newRadius, 0.0)
+  setParticleRadius(radius: number) {
+    this._particleRadius = Math.max(radius, 0.0)
   }
 
-  setMass(mass: number) {
-    this._mass = mass
+  setParticleMass(mass: number) {
+    this._particleMass = mass
   }
 
   resizeNumOfParticles(num: number) {
-    this._size = num
+    this._particleSize = num
 
     for (let idx = 0; idx < this._scalarDataList.length; idx++) {
       let scalarList = this._scalarDataList[idx]
-      scalarList = new Array<number>(this._size)
+      scalarList = new Array<number>(this._particleSize)
       scalarList.fill(0)
     }
 
     for (let idx = 0; idx < this._vectorDataList.length; idx++) {
       let vecList = this._vectorDataList[idx]
-      vecList = new Array<Vector3>(this._size)
+      vecList = new Array<Vector3>(this._particleSize)
       vecList.fill(new Vector3(0.0, 0.0, 0.0))
     }
   }
 
   // Getter Method
-  mass(): number {
-    return this._mass
+
+  particleRadius(): number {
+    return this._particleRadius
+  }
+  particleMass(): number {
+    return this._particleMass
   }
 
   numberOfParticles(): number {
-    return this._size
+    return this._particleSize
   }
 
   positions(): Array<Vector3> {

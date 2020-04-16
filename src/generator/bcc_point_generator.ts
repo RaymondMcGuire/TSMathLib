@@ -2,7 +2,7 @@
  * @Author: Xu.Wang
  * @Date: 2020-04-02 00:42:47
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-04-02 01:15:01
+ * @Last Modified time: 2020-04-15 22:54:11
  */
 import { PointGenerator } from './point_generator'
 import { Point3 } from '../math/point3'
@@ -28,15 +28,15 @@ export class BccPointGenerator extends PointGenerator {
     let hasOffset = false
     let shouldQuit = false
     for (let k = 0; k * halfSpacing <= boxDepth && !shouldQuit; ++k) {
-      pPos.z = k * halfSpacing + bbox._lower.z()
+      pPos.z = k * halfSpacing + bbox.lower().z()
 
       let offset = hasOffset ? halfSpacing : 0.0
 
       for (let j = 0; j * spacing + offset <= boxHeight && !shouldQuit; ++j) {
-        pPos.y = j * spacing + offset + bbox._lower.y()
+        pPos.y = j * spacing + offset + bbox.lower().y()
 
         for (let i = 0; i * spacing + offset <= boxWidth; ++i) {
-          pPos.x = i * spacing + offset + bbox._lower.x()
+          pPos.x = i * spacing + offset + bbox.lower().x()
           let p = new Point3(pPos.x, pPos.y, pPos.z)
           if (!callback(p)) {
             shouldQuit = true

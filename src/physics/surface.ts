@@ -2,7 +2,7 @@
  * @Author: Xu.Wang
  * @Date: 2020-04-07 01:29:25
  * @Last Modified by: Xu.Wang
- * @Last Modified time: 2020-04-07 17:58:38
+ * @Last Modified time: 2020-04-15 23:43:07
  */
 import { Transform } from './transform'
 import { Vector3, TS_MAX_NUM } from '../math'
@@ -35,6 +35,18 @@ export abstract class Surface {
 
   transform(): Transform {
     return this._transform
+  }
+
+  setTransform(t: Transform) {
+    this._transform = t
+  }
+
+  setIsNormalFlipped(i: boolean) {
+    this._isNormalFlipped = i
+  }
+
+  isNormalFlipped(): boolean {
+    return this._isNormalFlipped
   }
 
   // ! Returns the closest point from the given point \p otherPoint to the

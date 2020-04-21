@@ -30,9 +30,8 @@ export class PointHashGridSearcher extends PointNeighborSearcher {
   }
 
   build(points: Array<Vector3>) {
-    this._points.length = 0
-    this._buckets.length = 0
-
+    this._points.fill(new Vector3())
+    this._buckets.fill(new Array<number>(0))
     // init array
     this._points = new Array<Vector3>(points.length)
     this._buckets = new Array<Array<number>>(

@@ -71,11 +71,12 @@ export abstract class Collider {
     velocity: Vector3
   ) {
     if (!this._surface.isValidGeometry()) {
-      return { position: new Vector3(), velocity: new Vector3() }
+      return { pos: new Vector3(), vel: new Vector3() }
     }
 
     let colliderPoint = this.getClosestPoint(this._surface, position)
-
+      let pos = position.clone()
+      let vel =velocity.clone()
     // console.log(
     //   'isPenetrating:',
     //   this.isPenetrating(colliderPoint, position, radius)
@@ -119,14 +120,14 @@ export abstract class Collider {
         }
 
         // Reassemble the components
-        velocity = relativeVelN.add(relativeVelT).add(colliderVelAtTargetPoint)
+        vel = relativeVelN.add(relativeVelT).add(colliderVelAtTargetPoint)
       }
 
       // Geometric fix
-      position = targetPoint
+      pos = targetPoint
     }
 
-    return { position: position, velocity: velocity }
+    return { pos: pos, vel: vel }
   }
 
   frictionCoefficient(): number {

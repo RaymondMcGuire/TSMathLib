@@ -8,10 +8,10 @@ import { Vector3 } from '../math/vector3'
 import { PointNeighborSearcher } from '../search/point_neighbor_searcher'
 import { PointHashGridSearcher } from '../search/point_hash_grid_searcher'
 import { Point3 } from '../math/point3'
-import { LOG } from '../log/log'
+
 
 export class ParticleSystemData {
-  private DEFAULT_HASH_GRID_RESOLUTION: Point3 = new Point3(64, 64, 64)
+  private DEFAULT_HASH_GRID_RESOLUTION: Point3 = new Point3(8, 8, 8)
 
   private _particleRadius: number
   private _particleMass: number
@@ -28,12 +28,12 @@ export class ParticleSystemData {
   private _neighborLists: Array<Array<number>>
 
   constructor(particleRadius: number = 1e-3, particleMass: number = 1e-3) {
-    LOG.LOGGER(
-      'init ParticleSystemData: particleRadius=' +
-        particleRadius +
-        ',particleMass=' +
-        particleMass
-    )
+    // LOG.LOGGER(
+    //   'init ParticleSystemData: particleRadius=' +
+    //     particleRadius +
+    //     ',particleMass=' +
+    //     particleMass
+    // )
     // init particles params & particle number is zero
     this._particleRadius = particleRadius
     this._particleMass = particleMass
@@ -46,11 +46,11 @@ export class ParticleSystemData {
     // add basic data types
     this._positionIdx = this.addVectorData()
     this._velocityIdx = this.addVectorData()
-    this._forceIdx = this.addVectorData()
-
+      this._forceIdx = this.addVectorData()
+      
     // set neighbor searcher
     this._neighborSearcher = new PointHashGridSearcher(
-      2.0 * this._particleRadius,
+      0.0,
       this.DEFAULT_HASH_GRID_RESOLUTION
     )
 
@@ -102,7 +102,7 @@ export class ParticleSystemData {
 
     let points = this.positions()
     for (let i = 0; i < this.numberOfParticles(); ++i) {
-      let origin = points[i]
+        let origin = new Vector3(points[i].x(), points[i].y(), points[i].z())
       this._neighborLists[i] = new Array<number>()
 
       this._neighborSearcher.forEachNearbyPoint(
@@ -110,7 +110,7 @@ export class ParticleSystemData {
         maxSearchRadius,
 
         (j: number, _: Vector3) => {
-          if (i !== j) {
+            if (i !== j) {
             this._neighborLists[i].push(j)
           }
         }

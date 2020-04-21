@@ -47,4 +47,33 @@ export class BccPointGenerator extends PointGenerator {
       hasOffset = !hasOffset
     }
   }
+
+  forEachPointWithNoOffset(
+    bbox: BoundingBox,
+    spacing: number,
+    callback: (p: Point3) => boolean
+  ) {
+    let boxWidth = bbox.width()
+    let boxHeight = bbox.height()
+    let boxDepth = bbox.depth()
+
+    let pPos = new Point3(0.0, 0.0, 0.0)
+
+    let shouldQuit = false
+    for (let k = 0; k * spacing <= boxDepth && !shouldQuit; ++k) {
+      pPos.z = k * spacing + bbox.lower().z()
+      for (let j = 0; j * spacing <= boxHeight && !shouldQuit; ++j) {
+        pPos.y = j * spacing + bbox.lower().y()
+
+        for (let i = 0; i * spacing <= boxWidth; ++i) {
+          pPos.x = i * spacing + bbox.lower().x()
+          let p = new Point3(pPos.x, pPos.y, pPos.z)
+          if (!callback(p)) {
+            shouldQuit = true
+            break
+          }
+        }
+      }
+    }
+  }
 }

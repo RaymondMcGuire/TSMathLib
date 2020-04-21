@@ -15,12 +15,12 @@ export class VolumeGenerator {
 
   private _bcc: BccPointGenerator
 
-  constructor(bbox: BoundingBox, spacing: number) {
+  constructor(bbox: BoundingBox, spacing: number, bcc: boolean = false) {
     this._bbox = bbox
     this._spacing = spacing
     this._bcc = new BccPointGenerator()
     this._points = new Array<Point3>()
-    this._bcc.generate(this._bbox, this._spacing, this._points)
+    this._bcc.generate(this._bbox, this._spacing, this._points, bcc)
   }
 
   bbox(): BoundingBox {

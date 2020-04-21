@@ -44,6 +44,21 @@ export class BoundingBox {
     }
   }
 
+  setBboxWithCenter(center: Vector3, radius: number) {
+    let p1 = center.add(radius)
+    let p2 = center.sub(radius)
+    this._lower = new Vector3(
+      Math.min(p1.x(), p2.x()),
+      Math.min(p1.y(), p2.y()),
+      Math.min(p1.z(), p2.z())
+    )
+    this._upper = new Vector3(
+      Math.max(p1.x(), p2.x()),
+      Math.max(p1.y(), p2.y()),
+      Math.max(p1.z(), p2.z())
+    )
+  }
+
   lower(): Vector3 {
     return this._lower
   }

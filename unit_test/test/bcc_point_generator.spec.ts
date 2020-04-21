@@ -10,11 +10,11 @@ describe('Bcc Point Generator', () => {
     describe('Generate', () => {
         it('Generate bcc', () => {
             let bbox = new BoundingBox(new Vector3(0.0, 0.0, 0.0), new Vector3(1.0, 1.0, 1.0))
-            let spacing = 0.5
+            let spacing = 0.25
             let bcc = new BccPointGenerator()
             let points = new Array<Point3>()
             bcc.generate(bbox, spacing, points)
-            // bcc.printPoints2Py(points)
+            //bcc.printPoints2Py(points)
             //console.log(points.length)
             expect(true).to.true
         })

@@ -25,6 +25,7 @@ describe('Point Hash Grid Searcher', () => {
                 expect(i == 0 || i == 2).to.equal(true)
                 if (i == 0) {
                     expect(points[0]).to.equal(pt)
+
                 } else if (i == 2) {
                     expect(points[2]).to.equal(pt)
                 }

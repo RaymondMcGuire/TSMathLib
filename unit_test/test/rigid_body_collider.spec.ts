@@ -18,8 +18,8 @@ describe('Rigdi Body Collider', () => {
             let restitutionCoefficient = 0.5;
     
             let result = collider.resolveCollision(radius, restitutionCoefficient, newPosition, newVelocity);
-            newPosition = result.position
-            newVelocity = result.velocity
+            newPosition = result.pos
+            newVelocity = result.vel
             expect(1.0).to.equals(newPosition.x());
             expect(0.1).to.equals(newPosition.y());
             expect(0.0).to.equals(newPosition.z());
@@ -39,8 +39,8 @@ describe('Rigdi Body Collider', () => {
             let restitutionCoefficient = 0.5;
     
             let result = collider.resolveCollision(radius, restitutionCoefficient, newPosition, newVelocity);
-            newPosition = result.position
-            newVelocity = result.velocity
+            newPosition = result.pos
+            newVelocity = result.vel
             expect(1.0).to.equals(newPosition.x());
             expect(0.2).to.equals(newPosition.y());
             expect(0.0).to.equals(newPosition.z());
@@ -57,8 +57,8 @@ describe('Rigdi Body Collider', () => {
             let restitutionCoefficient = 0.5;
     
             let result = collider.resolveCollision(radius, restitutionCoefficient, newPosition, newVelocity);
-            newPosition = result.position
-            newVelocity = result.velocity
+            newPosition = result.pos
+            newVelocity = result.vel
             expect(1.0).to.equals(newPosition.x());
             expect(0.1).to.equals(newPosition.y());
             expect(0.0).to.equals(newPosition.z());
@@ -78,8 +78,8 @@ describe('Rigdi Body Collider', () => {
             let restitutionCoefficient = 0.5;
     
             let result = collider.resolveCollision(radius, restitutionCoefficient, newPosition, newVelocity);
-            newPosition = result.position
-            newVelocity = result.velocity
+            newPosition = result.pos
+            newVelocity = result.vel
             expect(1.0).to.equals(newPosition.x());
             expect(0.1).to.equals(newPosition.y());
             expect(0.0).to.equals(newPosition.z());
@@ -100,8 +100,8 @@ describe('Rigdi Body Collider', () => {
             
             collider.setFrictionCoefficient(0.1)
             let result = collider.resolveCollision(radius, restitutionCoefficient, newPosition, newVelocity);
-            newPosition = result.position
-            newVelocity = result.velocity
+            newPosition = result.pos
+            newVelocity = result.vel
 
             expect(1.0).to.equals(newPosition.x());
             expect(0.1).to.equals(newPosition.y());

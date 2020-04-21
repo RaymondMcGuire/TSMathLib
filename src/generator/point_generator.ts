@@ -15,11 +15,29 @@ export abstract class PointGenerator {
     callback: (p: Point3) => boolean
   ): void
 
-  generate(bbox: BoundingBox, spacing: number, points: Array<Point3>) {
-    this.forEachPoint(bbox, spacing, (p: Point3) => {
-      points.push(p)
-      return true
-    })
+  abstract forEachPointWithNoOffset(
+    bbox: BoundingBox,
+    spacing: number,
+    callback: (p: Point3) => boolean
+  ): void
+
+  generate(
+    bbox: BoundingBox,
+    spacing: number,
+    points: Array<Point3>,
+    bcc: boolean = false
+  ) {
+    if (bcc) {
+      this.forEachPoint(bbox, spacing, (p: Point3) => {
+        points.push(p)
+        return true
+      })
+    } else {
+      this.forEachPointWithNoOffset(bbox, spacing, (p: Point3) => {
+        points.push(p)
+        return true
+      })
+    }
   }
 
   printPoints2Py(points: Array<Point3>) {

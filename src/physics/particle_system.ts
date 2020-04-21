@@ -9,10 +9,12 @@ import { Vector3 } from '../math/vector3'
 import { PHY_GRAVITY } from './physics_constants'
 import { clamp } from '../math/math_utils'
 import { ConstantVectorField } from '../math/vector_field'
-import { PhysicsAnimation } from './physics_animation'
 import { Collider } from './collider'
+import { BoundingBox } from './bounding_box'
+import { BccPointGenerator } from '../generator'
+import { Point3 } from '../math'
 
-export class ParticleSystem extends PhysicsAnimation {
+export class ParticleSystem  {
   _dragCoefficient: number = 1e-4
   _restitutionCoefficient: number = 0.0
   _gravity: Vector3 = new Vector3(0.0, PHY_GRAVITY, 0.0)
@@ -26,20 +28,12 @@ export class ParticleSystem extends PhysicsAnimation {
   _newVelocities: Array<Vector3> = new Array<Vector3>()
   _newForces: Array<Vector3> = new Array<Vector3>()
 
-  constructor(
-    radius: number = 1e-3,
-    mass: number = 1e-3,
-    isUsingSubTimeSteps: boolean = false,
-    isUsingFixedSubTimeSteps: boolean = false,
-    numberOfFixedSubTimeSteps: number = 1
-  ) {
-    super(
-      isUsingSubTimeSteps,
-      isUsingFixedSubTimeSteps,
-      numberOfFixedSubTimeSteps
-    )
+  _pointsGen: BccPointGenerator
+
+  constructor(radius: number = 1e-3, mass: number = 1e-3) {
     this._particleSystemData = new ParticleSystemData(radius, mass)
     this._wind = new ConstantVectorField(new Vector3(0.0, 0.0, 0.0))
+    this._pointsGen = new BccPointGenerator()
   }
 
   collider() {
@@ -48,12 +42,6 @@ export class ParticleSystem extends PhysicsAnimation {
 
   setCollider(newCollider: Collider) {
     this._collider = newCollider
-  }
-
-  updateCollider(timeStepInSeconds: number) {
-    if (this._collider !== undefined) {
-      this._collider.update(timeStepInSeconds)
-    }
   }
 
   resolveCollision() {
@@ -68,9 +56,9 @@ export class ParticleSystem extends PhysicsAnimation {
           this._newPositions[idx],
           this._newVelocities[idx]
         )
-
-        this._newPositions[idx] = result.position
-        this._newVelocities[idx] = result.velocity
+            // console.log(this._newPositions[idx],result.position)
+        this._newPositions[idx] = result.pos
+        this._newVelocities[idx] = result.vel
       }
     }
   }
@@ -106,7 +94,7 @@ export class ParticleSystem extends PhysicsAnimation {
     this._gravity = newGravity
   }
 
-  accumulateExternalForces() {
+  calcExternalForces() {
     let n = this._particleSystemData.numberOfParticles()
     let forces = this._particleSystemData.forces()
     let velocities = this._particleSystemData.velocities()
@@ -140,50 +128,34 @@ export class ParticleSystem extends PhysicsAnimation {
     }
   }
 
-  accumulateForces(_: number) {
-    // Add external forces
-    this.accumulateExternalForces()
+
+  // ! add bcc-box structure particles
+  addBccBox(bbox: BoundingBox, bOffset: boolean = false) {
+    let spacing = this.particleSystemData().particleRadius() * 2.0
+    let points = new Array<Point3>()
+
+    this._pointsGen.generate(bbox, spacing, points, bOffset)
+
+    let p = new Array<Vector3>(points.length)
+    let v = new Array<Vector3>(points.length)
+    let f = new Array<Vector3>(points.length)
+    for (let idx = 0; idx < points.length; idx++) {
+      p[idx] = points[idx].toVector3()
+      v[idx] = new Vector3()
+      f[idx] = new Vector3()
+    }
+    this.particleSystemData().addParticles(p, v, f)
   }
 
-  // Implement Abstract Method
-  onInitialize() {
-    // When initializing the solver, update the collider and emitter state as
-    // well since they also affects the initial condition of the simulation.
-    // updateCollider(0.0);
-    // updateEmitter(0.0);
-  }
-
-  onAdvanceTimeStep(timeStepInSeconds: number) {
-    this.beginAdvanceTimeStep(timeStepInSeconds)
-
-    this.accumulateForces(timeStepInSeconds)
-
-    this.timeIntegration(timeStepInSeconds)
-
-    this.resolveCollision()
-
-    this.endAdvanceTimeStep(timeStepInSeconds)
-  }
-
-  beginAdvanceTimeStep(timeStepInSeconds: number) {
-    // Clear forces
-    let forces = this._particleSystemData.forces()
-    forces.fill(new Vector3())
-
-    // Update collider and emitter
-    this.updateCollider(timeStepInSeconds)
-    // updateEmitter(timeStepInSeconds);
-
-    // Allocate buffers
+    allocateBuffers() {
+          // Allocate buffers
     let n = this._particleSystemData.numberOfParticles()
     this._newPositions = new Array<Vector3>(n)
     this._newVelocities = new Array<Vector3>(n)
     this._newForces = new Array<Vector3>(n)
-
-    this.onBeginAdvanceTimeStep(timeStepInSeconds)
-  }
-
-  endAdvanceTimeStep(timeStepInSeconds: number) {
+    }
+    
+    updateParticlesData() {
     // Update data
     let n = this._particleSystemData.numberOfParticles()
     let positions = this._particleSystemData.positions()
@@ -193,8 +165,6 @@ export class ParticleSystem extends PhysicsAnimation {
       positions[index] = this._newPositions[index]
       velocities[index] = this._newVelocities[index]
     }
-
-    this.onEndAdvanceTimeStep(timeStepInSeconds)
   }
 
   // Overridable Method

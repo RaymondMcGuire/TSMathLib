@@ -118,6 +118,10 @@ export class Vector3 extends Vector {
   toPoint() {
     return new Point3(this.x(), this.y(), this.z())
   }
+    
+    clone() {
+        return new Vector3(this.x(),this.y(),this.z())
+    }
 
   debug(): string {
     return '[' + this.x() + ',' + this.y() + ',' + this.z() + ']'

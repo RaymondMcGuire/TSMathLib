@@ -25,6 +25,10 @@ export class PhysicsBox extends Surface {
     this._bound = new BoundingBox(lower, upper)
   }
 
+  setWithBbox(bbox: BoundingBox) {
+    this._bound = bbox
+  }
+
   bound(): BoundingBox {
     return this._bound
   }

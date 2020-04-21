@@ -4,23 +4,15 @@
  * @Last Modified by: Xu.Wang
  * @Last Modified time: 2020-04-16 18:45:39
  */
-import { Point3 } from '../math/point3'
-import { BccPointGenerator } from '../generator/bcc_point_generator'
-import { BoundingBox } from '../physics/bounding_box'
 import { Vector3 } from '../math/vector3'
-import { SphKernelSpiky } from './sph_kernel'
+import { SphKernelSpiky, SphKernelPoly6 } from './sph_kernel'
 import { ParticleSystemData } from '../physics/particle_system_data'
 import { PHY_WATER_DENSITY } from '../physics/physics_constants'
 import { square } from '../math'
-import { LOG } from '../log/log'
 
 export class SphData extends ParticleSystemData {
   _targetDensity: number
-  _targetSpacing: number
-
-  // ! Relative radius of SPH kernel
-  // ! SPH kernel radius divided by target spacing
-  _kernelRadiusOverTargetSpacing: number = 1.8
+  _pInKernelNum: number
 
   // ! SPH kernel radius in meters.
   _kernelRadius: number
@@ -28,39 +20,44 @@ export class SphData extends ParticleSystemData {
   _densityIdx: number
 
   constructor(
-    radius: number = 1e-3,
-    mass: number = 1e-3,
-    targetDensity: number = PHY_WATER_DENSITY,
-    targetSpacing: number = 0.1
+    mass: number = 0.04,
+    pInKernelNum: number = 20,
+    targetDensity: number = PHY_WATER_DENSITY
   ) {
-    super(radius, mass)
-
-    // set the fluid density & spacing & kernel radius
-    this._targetDensity = targetDensity
-    this._targetSpacing = targetSpacing
-    this._kernelRadius =
-      this._kernelRadiusOverTargetSpacing * this._targetSpacing
-    LOG.LOGGER(
-      'init SphData: targetDensity=' +
-        targetDensity +
-        ',targetSpacing=' +
-        targetSpacing +
-        ',kernelRadius=' +
-        this._kernelRadius
-    )
+    super(0.0, mass)
 
     // add sph params
     this._densityIdx = this.addScalarData()
     this._pressureIdx = this.addScalarData()
+    // set the fluid density & spacing & kernel radius
+    this._targetDensity = targetDensity
+    this._pInKernelNum = pInKernelNum
 
-    // recompute particle radius & mass
-    this.setTargetSpacing(this._targetSpacing)
-    LOG.LOGGER(
-      'recompute particle data: particleRadius=' +
-        this.particleRadius() +
-        ',particleMass=' +
-        this.particleMass()
+    // compute V & kernel radius & particle radius
+    let V = (this._pInKernelNum * this.particleMass()) / this._targetDensity
+    this._kernelRadius = Math.pow((3.0 * V) / (4.0 * Math.PI), 1 / 3)
+    this.setParticleRadius(
+      Math.pow(Math.PI / (6.0 * this._pInKernelNum), 1 / 3) * this._kernelRadius
     )
+
+    this.setTargetDensity(this.calcRestDensity())
+  }
+
+  // Properties Calculation
+  calcRestDensity() {
+    let poly6Kernel = new SphKernelPoly6(this._kernelRadius)
+    let r0 = 0.0
+    let l = 2 * this.particleRadius()
+    let n = Math.ceil(this._kernelRadius / l) + 1
+    for (let x = -n; x <= n; ++x) {
+      for (let y = -n; y <= n; ++y) {
+        for (let z = -n; z <= n; ++z) {
+          let rij = new Vector3(x * l, y * l, z * l)
+          r0 += this.particleMass() * poly6Kernel.get(rij.length())
+        }
+      }
+    }
+    return r0
   }
 
   densities(): Array<number> {
@@ -71,98 +68,26 @@ export class SphData extends ParticleSystemData {
     return this.scalarDataAt(this._pressureIdx)
   }
 
-  setTargetSpacing(spacing: number) {
-    super.setParticleRadius(spacing)
-
-    this._targetSpacing = spacing
-    this._kernelRadius =
-      this._kernelRadiusOverTargetSpacing * this._targetSpacing
-
-    this.computeMass()
-  }
-
-  targetSpacing(): number {
-    return this._targetSpacing
-  }
-
-  setRelativeKernelRadius(relativeRadius: number) {
-    this._kernelRadiusOverTargetSpacing = relativeRadius
-    this._kernelRadius =
-      this._kernelRadiusOverTargetSpacing * this._targetSpacing
-
-    this.computeMass()
-  }
-
-  relativeKernelRadius(): number {
-    return this._kernelRadiusOverTargetSpacing
-  }
-
   setKernelRadius(kernelRadius: number) {
     this._kernelRadius = kernelRadius
-    this._targetSpacing = kernelRadius / this._kernelRadiusOverTargetSpacing
-
-    this.computeMass()
   }
 
   kernelRadius(): number {
     return this._kernelRadius
   }
 
-  setMass(newMass: number) {
-    let incRatio = newMass / this.particleMass()
-    this._targetDensity *= incRatio
-    super.setParticleMass(newMass)
-  }
-
-  computeMass() {
-    let points = new Array<Point3>()
-    let bcc = new BccPointGenerator()
-    let bbox = new BoundingBox(
-      new Vector3(
-        -1.5 * this._kernelRadius,
-        -1.5 * this._kernelRadius,
-        -1.5 * this._kernelRadius
-      ),
-      new Vector3(
-        1.5 * this._kernelRadius,
-        1.5 * this._kernelRadius,
-        1.5 * this._kernelRadius
-      )
-    )
-    bcc.generate(bbox, this._targetSpacing, points)
-    let maxNumberDensity = 0.0
-    let kernel = new SphKernelSpiky(this._kernelRadius)
-
-    for (let i = 0; i < points.length; ++i) {
-      const point = points[i]
-      let sum = 0.0
-
-      for (let j = 0; j < points.length; ++j) {
-        const neighborPoint = points[j]
-        sum += kernel.get(neighborPoint.distanceTo(point))
-      }
-
-      maxNumberDensity = Math.max(maxNumberDensity, sum)
-    }
-
-    if (maxNumberDensity <= 0) {
-      console.log('Error: maxNumberDensity <= 0!')
-      return
-    }
-
-    let newMass = this._targetDensity / maxNumberDensity
-    super.setParticleMass(newMass)
-  }
-
-  sumOfKernelNearby(origin: Vector3) {
-    let sum = 0.0
-    let kernel = new SphKernelSpiky(this._kernelRadius)
+    sumOfKernelNearby(origin: Vector3) {
+        let sum = 0.0
+        // console.log("=====================")
+        let kernel = new SphKernelPoly6(this._kernelRadius)
     this.neighborSearcher().forEachNearbyPoint(
       origin,
       this._kernelRadius,
-      (_: number, neighborPosition: Vector3) => {
-        let dist = origin.distanceTo(neighborPosition)
-        sum += kernel.get(dist)
+      (i: number, neighborPosition: Vector3) => {
+          let dist = origin.distanceTo(neighborPosition)
+          sum += kernel.get(dist)
+         
+          // console.log(i)
       }
     )
     return sum
@@ -170,23 +95,22 @@ export class SphData extends ParticleSystemData {
 
   setTargetDensity(targetDensity: number) {
     this._targetDensity = targetDensity
-
-    this.computeMass()
   }
 
   targetDensity(): number {
     return this._targetDensity
   }
   // compute densities
-  updateDensities() {
+  calcDensities() {
     let p = this.positions()
     let d = this.densities()
     let m = this.particleMass()
-
     for (let i = 0; i < this.numberOfParticles(); i++) {
       let sum = this.sumOfKernelNearby(p[i])
-      d[i] = m * sum
+        d[i] = m * sum
+        // console.log(d[i])
     }
+   
   }
 
   interpolate(origin: Vector3, values: Array<number>): number {

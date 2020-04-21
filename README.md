@@ -2,7 +2,7 @@
 A math library developed by Typescript.
 
 ## Getting Started
-yarn install
+npm i tsmathlib
 
 ## Method
 ### Data Type

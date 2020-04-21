@@ -20,6 +20,10 @@ yarn install
   - Gaussian Elimination
   - Cramer's Rule
 - Gram Schmidt Process Method
+
+### Demo
+- [SPH Kernel](https://raymondmcguire.github.io/TSMathLib/examples/sph_kernel/)
+- [Simple SPH Online Version](https://raymondmcguire.github.io/TSMathLib/examples/sph/)
 ### Application
 - [Poisson Image Editing(SIGGRAPH 2003)](https://raymondmcguire.github.io/EcognitaMathLib/build/ "Poisson Image Editing")
 ![Poisson Image Editing](./build/images/poisson_image_editing_demo.gif?raw=true "Poisson Image Editing")

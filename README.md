@@ -22,7 +22,7 @@ yarn install
 - Gram Schmidt Process Method
 
 ### Demo
-- [SPH Kernel](https://raymondmcguire.github.io/TSMathLib/examples/sph_kernel/)
+- [SPH Kernel](https://raymondmcguire.github.io/TSMathLib/examples/sph_kernel_demo/)
 - [Simple SPH Online Version](https://raymondmcguire.github.io/TSMathLib/examples/sph/)
 ### Application
 - [Poisson Image Editing(SIGGRAPH 2003)](https://raymondmcguire.github.io/EcognitaMathLib/build/ "Poisson Image Editing")

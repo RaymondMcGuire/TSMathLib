@@ -2,9 +2,9 @@
 A math library developed by Typescript.
 
 ## Getting Started
-\```rb
+```rb
 npm i tsmathlib
-\```
+```
 ## Method
 ### Data Type
 * N-dimensions Vector

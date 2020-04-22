@@ -1,6 +1,6 @@
 {
     "name": "tsmathlib",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "main": "tsmath.js",
     "repository": "https://github.com/RaymondMcGuire/TSMathLib.git",
     "author": "wang xu <raymondmg@foxmail.com>",

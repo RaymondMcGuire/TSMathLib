@@ -26,7 +26,7 @@ npm i tsmathlib
 - [SPH Kernel](https://raymondmcguire.github.io/TSMathLib/examples/sph_kernel_demo/)
 - [Simple SPH Online Version](https://raymondmcguire.github.io/TSMathLib/examples/sph/)
 ### Application
-- [Poisson Image Editing(SIGGRAPH 2003)](https://raymondmgwx.github.io/[TSMathLib](url)/build/ "Poisson Image Editing")
+- [Poisson Image Editing(SIGGRAPH 2003)](https://raymondmcguire.github.io/TSMathLib/build/ "Poisson Image Editing")
 ![Poisson Image Editing](./build/images/poisson_image_editing_demo.gif?raw=true "Poisson Image Editing")
 
 ## Commands for Typescript

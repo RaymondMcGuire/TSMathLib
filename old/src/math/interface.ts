@@ -6,19 +6,19 @@
  */
 
 export interface MatrixIndex {
-	(i: number, j: number): void;
+  (i: number, j: number): void
 }
 export interface MatrixData {
-	(data: number): void;
+  (data: number): void
 }
 export interface MatrixSplit {
-	(s: Array<number>): void;
+  (s: Array<number>): void
 }
 
 export interface SparseMatrixData {
-	(data: [number, number, number]): void;
+  (data: [number, number, number]): void
 }
 
 export interface VectorData {
-	(data: number): void;
+  (data: number): void
 }
